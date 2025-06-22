@@ -9,12 +9,11 @@
 </p>
 
 <p align="center">
-  <a href="#features">Features</a> •
-  <a href="#system-requirements">Requirements</a> •
-  <a href="#installation">Installation</a> •
-  <a href="#usage">Usage</a> •
-  <a href="#safety">Safety</a> •
-  <a href="#contributing">Contributing</a>
+  <a href="#-features">Features</a> •
+  <a href="#-system-requirements">Requirements</a> •
+  <a href="#-installation--usage">Installation</a> •
+  <a href="#-safety--compatibility">Safety</a> •
+  <a href="#-contributing">Contributing</a>
 </p>
 
 ---
@@ -35,25 +34,31 @@
 
 ## 📋 System Requirements
 
-- **Operating System**: Windows 11 Home or Professional (fresh installation recommended)
+- **Operating System**: Windows 11 Home or Professional (fresh pro installation recommended)
 - **Architecture**: x64
 - **Python**: 3.12.4 or greater (for development)
 - **Administrator Privileges**: Required for system modifications
 - **Internet Connection**: Required for downloading scripts and system optimization
 
-## 🏗️ Architecture Overview
-
-Basilisk follows a modular 7-step debloating process:
-
-1. **📥 Download Scripts** - Downloads PowerShell scripts from Github servers
-2. **🦅 Execute Scripts** - Runs custom scripts for Edge removal and Office Online cleanup
-3. **🔧 Execute External Scripts** - Runs ChrisTitusTech WinUtil and Raphi's Win11Debloat
-4. **⚙️ Registry Tweaks** - Applies visual and performance registry modifications
-5. **🚀 Advanced Optimizations** - Enables Ultimate Performance, disables telemetry, removes UWP apps
-6. **🔄 Configure Updates** - Sets appropriate update policies for your Windows edition
-7. **🎨 Apply Background** - Sets custom desktop wallpaper and cleans up temporary files
-
 ## 🚀 Installation & Usage
+
+### Quick Start (One-Liner)
+
+Run Basilisk directly from GitHub with a single command:
+
+```powershell
+iex (irm https://raw.githubusercontent.com/ctrlcat0x/basilisk/main/run.ps1)
+```
+
+**Requirements:**
+- PowerShell (run as Administrator)
+- Internet connection
+- Windows 11
+
+This command will automatically:
+- Configure Windows Defender settings
+- Download the latest Basilisk executable
+- Launch Basilisk with administrator privileges
 
 ### Pre-built Binary (Recommended)
 
@@ -91,6 +96,18 @@ python basilisk.py --skip-registry-tweaks-step
 python basilisk.py --skip-configure-updates-step
 # ... etc for all 7 steps
 ```
+
+## 🏗️ Architecture Overview
+
+Basilisk follows a modular 7-step debloating process:
+
+1. **📥 Download Scripts** - Downloads PowerShell scripts from Github servers
+2. **🦅 Execute Scripts** - Runs custom scripts for Edge removal and Office Online cleanup
+3. **🔧 Execute External Scripts** - Runs ChrisTitusTech WinUtil and Raphi's Win11Debloat
+4. **⚙️ Registry Tweaks** - Applies visual and performance registry modifications
+5. **🚀 Advanced Optimizations** - Enables Ultimate Performance, disables telemetry, removes UWP apps
+6. **🔄 Configure Updates** - Sets appropriate update policies for your Windows edition
+7. **🎨 Apply Background** - Sets custom desktop wallpaper and cleans up temporary files
 
 ## 🛡️ Safety & Compatibility
 
