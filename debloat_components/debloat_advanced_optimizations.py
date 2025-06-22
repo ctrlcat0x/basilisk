@@ -13,16 +13,44 @@ def create_system_restore_point():
     """Create a system restore point before making changes."""
     try:
         logger.info("Creating system restore point...")
+        
+        # First, check if System Restore service is enabled
+        check_service_command = 'Get-Service -Name "VSS" | Select-Object -ExpandProperty Status'
+        service_status = run_powershell_command(check_service_command, allow_continue_on_fail=True)
+        
+        # If service is not running, try to enable it
+        if service_status != 0:
+            logger.info("System Restore service is disabled, attempting to enable it...")
+            enable_service_commands = [
+                'Set-Service -Name "VSS" -StartupType Automatic -ErrorAction SilentlyContinue',
+                'Start-Service -Name "VSS" -ErrorAction SilentlyContinue',
+                'Set-Service -Name "VSS" -StartupType Automatic -ErrorAction SilentlyContinue'
+            ]
+            
+            for cmd in enable_service_commands:
+                result = run_powershell_command(cmd, allow_continue_on_fail=True)
+                if result == 0:
+                    logger.info("System Restore service enabled successfully")
+                    break
+            else:
+                logger.warning("Could not enable System Restore service - continuing without restore point")
+                return True  # Continue anyway
+        
+        # Now try to create the restore point
         command = 'Checkpoint-Computer -Description "Basilisk Restore Point" -RestorePointType "MODIFY_SETTINGS"'
-        result = run_powershell_command(command)
+        result = run_powershell_command(command, allow_continue_on_fail=True)
+        
         if result == 0:
             logger.info("System restore point created successfully")
+            return True
         else:
-            logger.warning("Failed to create system restore point")
-        return result == 0
+            logger.warning("Failed to create system restore point - continuing without it")
+            return True  # Continue anyway, don't fail the entire process
+            
     except Exception as e:
         logger.error(f"Error creating restore point: {e}")
-        return False
+        logger.warning("Continuing without system restore point")
+        return True  # Continue anyway, don't fail the entire process
 
 
 def set_ultimate_power_plan():
