@@ -21,6 +21,9 @@ def main():
         (winreg.HKEY_CURRENT_USER,
          r"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
          "HideFileExt", winreg.REG_DWORD, 0),
+        (winreg.HKEY_CURRENT_USER,
+         r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
+         "EnableTransparency", winreg.REG_DWORD, 1),
 
         # Game DVR and Gaming
         (winreg.HKEY_CURRENT_USER,

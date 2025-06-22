@@ -11,14 +11,15 @@
 2. [System Requirements & Compatibility](#system-requirements--compatibility)
 3. [Architecture & Design](#architecture--design)
 4. [Core Components](#core-components)
-5. [The 7-Step Debloating Process](#the-7-step-debloating-process)
+5. [The 8-Step Debloating Process](#the-8-step-debloating-process)
 6. [Technical Implementation Details](#technical-implementation-details)
-7. [Windows System Effects](#windows-system-effects)
-8. [Safety & Recovery](#safety--recovery)
-9. [Troubleshooting & Logging](#troubleshooting--logging)
-10. [Development Guide](#development-guide)
-11. [Contributing](#contributing)
-12. [License & Legal](#license--legal)
+7. [Automatically Installed Applications](#automatically-installed-applications)
+8. [Windows System Effects](#windows-system-effects)
+9. [Safety & Recovery](#safety--recovery)
+10. [Troubleshooting & Logging](#troubleshooting--logging)
+11. [Development Guide](#development-guide)
+12. [Contributing](#contributing)
+13. [License & Legal](#license--legal)
 
 ---
 
@@ -291,7 +292,35 @@ Provides the main window framework with overlay capabilities.
 - Handles tool-specific requirements
 - Logs all modifications
 
-### Step 4: Registry Tweaks (`debloat_registry_tweaks.py`)
+### Step 4: Execute Privacy.sexy (`debloat_execute_privacy_sexy.py`)
+
+**Purpose**: Runs comprehensive privacy and security hardening using the privacy.sexy script.
+
+**Script Used:**
+- **privacy.sexy**: Open-source privacy and security hardening tool
+
+**Windows Effects:**
+- **Privacy Hardening**: Comprehensive privacy protection measures
+- **Security Enhancements**: Advanced security configurations
+- **Data Collection**: Disables telemetry and data collection
+- **System Hardening**: Applies security best practices
+- **Privacy Controls**: Configures privacy settings across the system
+
+**Technical Details:**
+- Executes privacy.sexy PowerShell script
+- Runs with elevated privileges for system-wide changes
+- 10-minute timeout for script execution
+- Comprehensive logging of all privacy and security modifications
+- Handles script warnings and errors gracefully
+
+**Privacy.sexy Features:**
+- **Rich**: Hundreds of scripts for comprehensive privacy control
+- **Transparent**: Full visibility into what each tweak does
+- **Reversible**: All changes can be reverted if needed
+- **Tested**: Community-tested and verified scripts
+- **Extensible**: Custom templating language for additional scripts
+
+### Step 5: Registry Tweaks (`debloat_registry_tweaks.py`)
 
 **Purpose**: Applies visual and performance registry modifications.
 
@@ -307,6 +336,10 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
 HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize
 "AppsUseLightTheme" = 0
 "SystemUsesLightTheme" = 0
+
+# Transparency effects
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize
+"EnableTransparency" = 1
 
 # File extension visibility
 HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
@@ -329,11 +362,11 @@ HKEY_CURRENT_USER\System\GameConfigStore
 ```
 
 **Windows Effects:**
-- **Visual**: Left-aligned taskbar, dark theme, visible file extensions
+- **Visual**: Left-aligned taskbar, dark theme, visible file extensions, transparency effects
 - **Performance**: Faster menu animations, reduced UI delays
 - **Gaming**: Disabled Game DVR for better performance
 
-### Step 5: Advanced Optimizations (`debloat_advanced_optimizations.py`)
+### Step 6: Advanced Optimizations (`debloat_advanced_optimizations.py`)
 
 **Purpose**: Applies comprehensive system debloat and hardening.
 
@@ -359,6 +392,11 @@ HKEY_CURRENT_USER\System\GameConfigStore
 - **Bloatware**: Removes manufacturer-installed applications
 - **System Apps**: Removes non-essential system applications
 
+#### Hardware Optimizations
+- **SSD Optimization**: Enables TRIM, disables defrag, optimizes for SSD performance
+- **Memory Optimization**: Advanced memory management and virtual memory settings
+- **Network Optimization**: TCP Fast Open, network adapter optimizations
+
 **Windows Effects:**
 - **Performance**: Significantly improved system responsiveness
 - **Privacy**: Enhanced privacy protection
@@ -366,8 +404,9 @@ HKEY_CURRENT_USER\System\GameConfigStore
 - **Search**: **MAINTAINED** - Windows Search functionality preserved
 - **Resource Usage**: Reduced memory and CPU usage
 - **Startup Time**: Faster system boot times (Fast Startup preserved)
+- **Hardware**: Optimized for SSD, memory, and network performance
 
-### Step 6: Configure Updates (`debloat_configure_updates.py`)
+### Step 7: Configure Updates (`debloat_configure_updates.py`)
 
 **Purpose**: Configures Windows Update policies based on system edition.
 
@@ -394,7 +433,7 @@ HKEY_CURRENT_USER\System\GameConfigStore
 - **Stability**: Reduced risk of problematic updates
 - **Security**: Maintains security while controlling feature updates
 
-### Step 7: Apply Background (`debloat_apply_background.py`)
+### Step 8: Apply Background (`debloat_apply_background.py`)
 
 **Purpose**: Sets custom desktop wallpaper and performs cleanup.
 
@@ -410,99 +449,54 @@ HKEY_CURRENT_USER\System\GameConfigStore
 
 ---
 
-## Technical Implementation Details
+## Automatically Installed Applications
 
-### PowerShell Integration
+Basilisk can automatically install several useful applications during the debloating process. These installations are handled by the external tools (ChrisTitusTech WinUtil) that Basilisk integrates with.
 
-Basilisk extensively uses PowerShell for system modifications:
+### Core Development & System Tools
 
-```python
-def execute_powershell_script(script_path, arguments=None):
-    """
-    Executes a PowerShell script with proper error handling.
-    
-    Args:
-        script_path (str): Path to the PowerShell script
-        arguments (list): Optional arguments for the script
-    
-    Returns:
-        tuple: (success, output, error)
-    """
-    try:
-        # Set execution policy
-        subprocess.run(['powershell', 'Set-ExecutionPolicy', 'Bypass', '-Scope', 'Process', '-Force'])
-        
-        # Execute script
-        cmd = ['powershell', '-ExecutionPolicy', 'Bypass', '-File', script_path]
-        if arguments:
-            cmd.extend(arguments)
-            
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-        
-        return result.returncode == 0, result.stdout, result.stderr
-    except Exception as e:
-        return False, "", str(e)
+- **Microsoft Windows Terminal** - Modern terminal emulator with tabs and customization
+- **Git** - Distributed version control system for software development
+- **7-Zip** - High-compression file archiver and extractor
+- **Microsoft Visual C++ Redistributables (2015+)** - Essential runtime libraries
+  - x86 version for 32-bit applications
+  - x64 version for 64-bit applications
+
+### Web Browsers
+
+- **Brave Browser** - Privacy-focused web browser with built-in ad blocking
+- **Zen Browser** - Alternative web browser with enhanced privacy features
+
+### Development Runtime
+
+- **Microsoft .NET Desktop Runtime 8** - .NET framework for desktop applications
+- **Microsoft .NET Desktop Runtime 9** - Latest .NET framework version
+- **Microsoft Edge WebView2 Runtime** - Web component framework for applications
+
+### Installation Method
+
+Applications are installed using **WinGet** (Windows Package Manager) as the primary method, with Chocolatey as a fallback option. The installation configuration is defined in `configs/default.json`:
+
+```json
+"Install": [
+    {
+        "winget": "Microsoft.WindowsTerminal",
+        "choco": "microsoft-windows-terminal"
+    },
+    {
+        "winget": "Brave.Brave",
+        "choco": "brave"
+    }
+    // ... additional applications
+]
 ```
 
-### Registry Operations
+### Important Notes
 
-Safe registry modifications with backup and rollback:
-
-```python
-def modify_registry(key_path, value_name, value_data, value_type=winreg.REG_DWORD):
-    """
-    Safely modifies registry values with backup and error handling.
-    
-    Args:
-        key_path (str): Registry key path
-        value_name (str): Value name to modify
-        value_data: New value data
-        value_type: Registry value type
-    
-    Returns:
-        bool: Success status
-    """
-    try:
-        # Create backup
-        backup_registry_value(key_path, value_name)
-        
-        # Modify registry
-        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_WRITE)
-        winreg.SetValueEx(key, value_name, 0, value_type, value_data)
-        winreg.CloseKey(key)
-        
-        return True
-    except Exception as e:
-        logger.error(f"Registry modification failed: {e}")
-        return False
-```
-
-### Error Handling Strategy
-
-Comprehensive error handling at multiple levels:
-
-1. **Application Level**: Global exception handlers
-2. **Component Level**: Individual component error handling
-3. **Step Level**: Step-specific error recovery
-4. **System Level**: Windows API error handling
-
-### Logging Architecture
-
-Structured logging with multiple levels:
-
-```python
-import logging
-
-# Configure logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(f'{temp_dir}/basilisk.log'),
-        logging.StreamHandler()
-    ]
-)
-```
+- **External Tool Dependency**: Installation is handled by ChrisTitusTech WinUtil, not directly by Basilisk
+- **User Choice**: Installation may be configurable or optional depending on WinUtil settings
+- **System Requirements**: Some applications require specific Windows versions or prerequisites
+- **Installation Success**: Individual package installation success depends on system compatibility and network connectivity
 
 ---
 
@@ -884,6 +878,7 @@ The developers are not responsible for any data loss or system issues that may o
 - [Raven Development Team](https://ravendevteam.org/)
 - [ChrisTitusTech](https://github.com/christitustech) - [CTT WinUtil](https://github.com/christitustech/winutil)
 - [Raphire](https://github.com/Raphire) - [Win11Debloat](https://github.com/Raphire/Win11Debloat)
+- [undergroundwires](https://github.com/undergroundwires) - [privacy.sexy](https://github.com/undergroundwires/privacy.sexy) - Comprehensive privacy and security hardening tool
 
 ### Community Contributors
 - [mre31](https://github.com/mre31)

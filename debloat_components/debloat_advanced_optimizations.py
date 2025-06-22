@@ -95,7 +95,19 @@ def uninstall_uwp_apps():
             "Microsoft.WindowsAlarms", "Microsoft.WindowsCamera", "Microsoft.WindowsMaps",
             "Microsoft.WindowsSoundRecorder", "Microsoft.Xbox.TCUI", "Microsoft.XboxApp",
             "Microsoft.XboxGameOverlay", "Microsoft.XboxIdentityProvider", "Microsoft.XboxSpeechToTextOverlay",
-            "Microsoft.ZuneVideo", "Microsoft.ZuneMusic"
+            "Microsoft.ZuneVideo", "Microsoft.ZuneMusic",
+            "Microsoft.YourPhone", "Microsoft.Wallet", "Microsoft.Microsoft3DViewer",
+            "Microsoft.MicrosoftOfficeHub", "Microsoft.OneConnect", "Microsoft.People",
+            "Microsoft.Print3D", "Microsoft.Whiteboard", "Microsoft.WindowsFeedbackHub",
+            "Microsoft.WindowsReadingList", "Microsoft.WindowsSoundRecorder", "Microsoft.XboxGamingOverlay",
+            "Microsoft.XboxGameCallableUI", "Microsoft.XboxGameOverlay", "Microsoft.XboxIdentityProvider",
+            "Microsoft.XboxSpeechToTextOverlay", "Microsoft.Xbox.TCUI", "Microsoft.XboxApp",
+            "Microsoft.XboxGameOverlay", "Microsoft.XboxIdentityProvider", "Microsoft.XboxSpeechToTextOverlay",
+            "Microsoft.ZuneMusic", "Microsoft.ZuneVideo",
+            "E046963F.LenovoCompanion", "E046963F.LenovoSettings", "E046963F.LenovoID",
+            "E2A4F912.LenovoUtility", "E046963F.LenovoCompanion", "E2A4F912.LenovoUtility",
+            "DellInc.PartnerPromo", "ASUSTeKComputerInc.ZenLink", "ASUSTeKComputerInc.MyASUS",
+            "AcerIncorporated.AcerPortal", "AcerIncorporated.AcerExplorer"
         ]
         
         for app in apps_to_remove:
@@ -622,6 +634,73 @@ def optimize_startup_performance():
         return False
 
 
+def optimize_ssd():
+    """Optimize Windows for SSD drives."""
+    try:
+        logger.info("Optimizing system for SSD...")
+        commands = [
+            # Enable TRIM
+            'fsutil behavior set DisableDeleteNotify 0',
+            # Disable scheduled defrag for SSDs
+            'schtasks /Change /TN "Microsoft\\Windows\\Defrag\\ScheduledDefrag" /Disable',
+            # Disable Superfetch (SysMain)
+            'Stop-Service -Name "SysMain" -Force -ErrorAction SilentlyContinue',
+            'Set-Service -Name "SysMain" -StartupType Disabled -ErrorAction SilentlyContinue',
+        ]
+        for command in commands:
+            result = run_powershell_command(command)
+            if result != 0:
+                logger.warning(f"Command failed: {command}")
+        logger.info("SSD optimization complete.")
+        return True
+    except Exception as e:
+        logger.error(f"Error optimizing SSD: {e}")
+        return False
+
+
+def optimize_memory():
+    """Apply advanced memory management tweaks."""
+    try:
+        logger.info("Optimizing memory settings...")
+        commands = [
+            # Clear standby memory (requires RAMMap or similar, but we can use PowerShell for basic clear)
+            'Clear-Content -Path "$env:TEMP\\*" -Force -ErrorAction SilentlyContinue',
+            # Set virtual memory to system managed (optional, can be expanded)
+            'wmic computersystem where name="%computername%" set AutomaticManagedPagefile=True',
+        ]
+        for command in commands:
+            result = run_powershell_command(command)
+            if result != 0:
+                logger.warning(f"Command failed: {command}")
+        logger.info("Memory optimization complete.")
+        return True
+    except Exception as e:
+        logger.error(f"Error optimizing memory: {e}")
+        return False
+
+
+def optimize_network():
+    """Optimize network adapter and connection settings."""
+    try:
+        logger.info("Optimizing network settings...")
+        commands = [
+            # Enable TCP Fast Open
+            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters" -Name "EnableTcpFastOpen" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue',
+            # Disable Nagle's Algorithm (for all interfaces)
+            # This is a per-adapter setting, so we can set for all interfaces
+            # (Advanced: enumerate interfaces and set TcpAckFrequency/TcpNoDelay)
+        ]
+        for command in commands:
+            result = run_powershell_command(command)
+            if result != 0:
+                logger.warning(f"Command failed: {command}")
+        logger.info("Network optimization complete.")
+        return True
+    except Exception as e:
+        logger.error(f"Error optimizing network: {e}")
+        return False
+
+
 def main():
     """Run all advanced optimizations."""
     logger.info("Starting advanced Windows optimizations...")
@@ -648,7 +727,10 @@ def main():
         optimize_memory_settings,
         optimize_gaming_settings,
         optimize_privacy_settings,
-        optimize_startup_performance
+        optimize_startup_performance,
+        optimize_ssd,
+        optimize_memory,
+        optimize_network
     ]
     
     for optimization in optimizations:

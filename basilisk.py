@@ -12,6 +12,7 @@ import preinstall_components.pre_checks as pre_checks
 import debloat_components.debloat_download_scripts as debloat_download_scripts
 import debloat_components.debloat_execute_raven_scripts as debloat_execute_raven_scripts
 import debloat_components.debloat_execute_external_scripts as debloat_execute_external_scripts
+import debloat_components.debloat_execute_privacy_sexy as debloat_execute_privacy_sexy
 import debloat_components.debloat_registry_tweaks as debloat_registry_tweaks
 import debloat_components.debloat_configure_updates as debloat_configure_updates
 import debloat_components.debloat_apply_background as debloat_apply_background
@@ -31,37 +32,42 @@ def create_restore_point_first():
 DEBLOAT_STEPS = [
     (
         "download-scripts",
-        "Downloading some necessary scripts... (1/7)",
+        "Downloading some necessary scripts... (1/8)",
         debloat_download_scripts.main,
     ),
     (
         "execute-raven-scripts",
-        "Executing debloating scripts... (2/7)",
+        "Executing debloating scripts... (2/8)",
         debloat_execute_raven_scripts.main,
     ),
     (
         "execute-external-scripts",
-        "Debloating Windows... (3/7)",
+        "Debloating Windows... (3/8)",
         debloat_execute_external_scripts.main,
     ),
     (
+        "execute-privacy-sexy",
+        "Applying privacy and security hardening... (4/8)",
+        debloat_execute_privacy_sexy.main,
+    ),
+    (
         "registry-tweaks",
-        "Making some visual tweaks... (4/7)",
+        "Making some visual tweaks... (5/8)",
         debloat_registry_tweaks.main,
     ),
     (
         "advanced-optimizations",
-        "Applying advanced system optimizations... (5/7)",
+        "Applying advanced system optimizations... (6/8)",
         debloat_advanced_optimizations.main,
     ),
     (
         "configure-updates",
-        "Configuring Windows Update policies... (6/7)",
+        "Configuring Windows Update policies... (7/8)",
         debloat_configure_updates.main,
     ),
     (
         "apply-background",
-        "Setting your desktop background... (7/7)",
+        "Setting your desktop background... (8/8)",
         debloat_apply_background.main,
     ),
 ]
