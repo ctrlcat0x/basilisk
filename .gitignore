@@ -1,0 +1,8 @@
+# PyInstaller build artifacts
+/dist/
+/build/
+*.spec
+__pycache__/
+*.pyc
+.DS_Store
+/basilisk.log
