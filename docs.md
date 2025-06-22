@@ -344,10 +344,10 @@ HKEY_CURRENT_USER\System\GameConfigStore
 - **Power Settings**: Optimizes CPU and GPU power management
 
 #### Security & Privacy
-- **Windows Defender**: Configures for optimal performance
+- **Windows Defender**: **PRESERVED** - Windows Defender is kept enabled for system security
 - **Telemetry**: Disables data collection
-- **Cortana**: Disables Cortana functionality
-- **Search Indexing**: Optimizes search performance
+- **Cortana**: **PRESERVED** - Windows Search functionality is maintained
+- **Search Indexing**: **PRESERVED** - Search functionality is maintained
 
 #### System Services
 - **Non-Essential Services**: Disables unnecessary background services
@@ -362,8 +362,10 @@ HKEY_CURRENT_USER\System\GameConfigStore
 **Windows Effects:**
 - **Performance**: Significantly improved system responsiveness
 - **Privacy**: Enhanced privacy protection
+- **Security**: **MAINTAINED** - Windows Defender protection preserved
+- **Search**: **MAINTAINED** - Windows Search functionality preserved
 - **Resource Usage**: Reduced memory and CPU usage
-- **Startup Time**: Faster system boot times
+- **Startup Time**: Faster system boot times (Fast Startup preserved)
 
 ### Step 6: Configure Updates (`debloat_configure_updates.py`)
 
@@ -537,14 +539,15 @@ logging.basicConfig(
 ### Security Improvements
 
 #### Windows Defender
-- **Real-time Protection**: Optimized for performance
-- **Scan Frequency**: Reduced for better performance
-- **Exclusions**: Configured for development tools
+- **Real-time Protection**: **PRESERVED** - Windows Defender remains fully functional
+- **Scan Frequency**: **PRESERVED** - Default scan settings maintained
+- **Exclusions**: **PRESERVED** - No exclusions added for safety
 
 #### System Hardening
 - **Unnecessary Services**: Disabled
 - **Network Protocols**: Optimized
 - **File System**: Enhanced security
+- **Search Functionality**: **PRESERVED** - Windows Search remains functional
 
 ### User Experience Changes
 
@@ -559,6 +562,8 @@ logging.basicConfig(
 - **Office Online**: Removed
 - **UWP Apps**: Most pre-installed apps removed
 - **Start Menu**: Cleaned and optimized
+- **Windows Search**: **PRESERVED** - Search functionality maintained
+- **Fast Startup**: **PRESERVED** - Boot performance maintained
 
 ---
 

@@ -1,24 +1,7 @@
 # Winzilla Functions - Clean PowerShell Functions for Windows Optimization
 # Removed all UI components, keeping only the core optimization functions
 
-$script:restorePointCreated = $false
-
-function createRestorePointIfNeeded {
-    if (-not $script:restorePointCreated) {
-        Write-Host "Creating a system restore point..."
-        try {
-            Checkpoint-Computer -Description "Basilisk Restore Point" -RestorePointType "MODIFY_SETTINGS" -ErrorAction Stop
-            $script:restorePointCreated = $true
-            Write-Host "System restore point created successfully."
-        }
-        catch {
-            Write-Host "Failed to create system restore point: $($_.Exception.Message)" -ForegroundColor Red
-        }
-    }
-}
-
 function ultimatePowerPlan {
-    createRestorePointIfNeeded
     Write-Host "Executing ultimatePowerPlan function..."
     Write-Host "Checking if Ultimate Performance plan is available..."
 
@@ -45,7 +28,6 @@ function ultimatePowerPlan {
 }
 
 function defenderTweaks {
-    createRestorePointIfNeeded
     Write-Host "Executing defenderTweaks function..."
     Stop-Service -Name "WinDefend" -Force -ErrorAction SilentlyContinue
     Stop-Service -Name "wuauserv" -Force -ErrorAction SilentlyContinue
@@ -70,7 +52,6 @@ function defenderTweaks {
 }
 
 function uninstallUWPApps {
-    createRestorePointIfNeeded
     Write-Host "Executing uninstallUWPApps function..."
     $appsToRemove = @(
         "Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.GetHelp",
@@ -98,7 +79,6 @@ function uninstallUWPApps {
 }
 
 function disableCortana {
-    createRestorePointIfNeeded
     Write-Host "Executing disableCortana function..."
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -ErrorAction SilentlyContinue
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Type DWord -Value 0 -ErrorAction SilentlyContinue
@@ -109,7 +89,6 @@ function disableCortana {
 }
 
 function disableTelemetry {
-    createRestorePointIfNeeded
     Write-Host "Executing disableTelemetry function..."
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "CommercialDataOptIn" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
@@ -124,7 +103,6 @@ function disableTelemetry {
 }
 
 function removeOneDrive {
-    createRestorePointIfNeeded
     Write-Host "Executing removeOneDrive function..."
     taskkill /f /im OneDrive.exe /fi "STATUS eq RUNNING" >$null 2>&1
 
@@ -151,7 +129,6 @@ function removeOneDrive {
 }
 
 function disableTaskbarIcons {
-    createRestorePointIfNeeded
     Write-Host "Executing disableTaskbarIcons function..."
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Feeds" -Name "ShellFeedsTaskbarViewMode" -Type DWord -Value 2 -Force -ErrorAction SilentlyContinue
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings" -Name "NOC_GLOBAL_SETTING_MEETNOW_ENABLED" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
@@ -160,7 +137,6 @@ function disableTaskbarIcons {
 }
 
 function disableAdsTracking {
-    createRestorePointIfNeeded
     Write-Host "Executing disableAdsTracking function..."
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy" -Name "TailoredExperiencesWithDiagnosticDataEnabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
@@ -169,7 +145,6 @@ function disableAdsTracking {
 }
 
 function disableSearchIndexing {
-    createRestorePointIfNeeded
     Write-Host "Executing disableSearchIndexing function..."
     Get-WmiObject -Class Win32_Volume | Where-Object { $_.DriveType -eq 3 -and $_.IndexingEnabled -eq $true } | ForEach-Object {
         Write-Host "Disabling indexing on drive $($_.DriveLetter)..."
@@ -183,7 +158,6 @@ function disableSearchIndexing {
 }
 
 function cleanTempFiles {
-    createRestorePointIfNeeded
     Write-Host "Executing cleanTempFiles function..."
     $tempPaths = @(
         "$env:TEMP\*"
@@ -210,7 +184,6 @@ function cleanTempFiles {
 }
 
 function disableDeliveryOptimization {
-    createRestorePointIfNeeded
     Write-Host "Executing disableDeliveryOptimization function..."
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DOMaxBackgroundUploadBandwidth" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
@@ -220,7 +193,6 @@ function disableDeliveryOptimization {
 }
 
 function disableSuggestedContent {
-    createRestorePointIfNeeded
     Write-Host "Executing disableSuggestedContent function..."
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue
@@ -233,7 +205,6 @@ function disableSuggestedContent {
 }
 
 function clearDNSCache {
-    createRestorePointIfNeeded
     Write-Host "Executing clearDNSCache function..."
     ipconfig /flushdns
     Write-Host "DNS Cache cleared."
@@ -241,7 +212,6 @@ function clearDNSCache {
 }
 
 function disableFastStartup {
-    createRestorePointIfNeeded
     Write-Host "Executing disableFastStartup function..."
     powercfg /h off
     Write-Host "Fast Startup disabled."
@@ -249,7 +219,6 @@ function disableFastStartup {
 }
 
 function disableAutomaticMaintenance {
-    createRestorePointIfNeeded
     Write-Host "Executing disableAutomaticMaintenance function..."
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\Maintenance" -Name "MaintenanceDisabled" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue
     Write-Host "Automatic Maintenance disabled."
@@ -257,7 +226,6 @@ function disableAutomaticMaintenance {
 }
 
 function disableMoreNonEssentialServices {
-    createRestorePointIfNeeded
     Write-Host "Executing disableMoreNonEssentialServices function..."
 
     Set-Service -Name "Fax" -StartupType Disabled -ErrorAction SilentlyContinue
@@ -286,7 +254,6 @@ function disableMoreNonEssentialServices {
 # Main optimization function that runs all optimizations
 function runAllOptimizations {
     Write-Host "Starting comprehensive Windows optimization..."
-    createRestorePointIfNeeded
     
     ultimatePowerPlan
     defenderTweaks

@@ -6,3 +6,6 @@ __pycache__/
 *.pyc
 .DS_Store
 /basilisk.log
+/build_cache/
+.vscode/
+/releases/
