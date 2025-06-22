@@ -1,4 +1,4 @@
-# 🐍 Basilisk - Windows 11 Debloating Utility
+# <img src="./media/icon.png" alt="Basilisk Banner" width="100"> Basilisk - Windows 11 Debloating Utility
 
 <p align="center">
   <img src="banner.png" alt="Basilisk Banner" width="800">
