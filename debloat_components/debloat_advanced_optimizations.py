@@ -14,17 +14,16 @@ def create_system_restore_point():
     try:
         logger.info("Creating system restore point...")
         
-        # First, check if System Restore service is enabled
-        check_service_command = 'Get-Service -Name "VSS" | Select-Object -ExpandProperty Status'
-        service_status = run_powershell_command(check_service_command, allow_continue_on_fail=True)
+        # First, check if System Restore service is running
+        check_service_command = 'Get-Service -Name "VSS" | Where-Object {$_.Status -eq "Running"} | Select-Object -First 1'
+        service_running = run_powershell_command(check_service_command, allow_continue_on_fail=True)
         
         # If service is not running, try to enable it
-        if service_status != 0:
-            logger.info("System Restore service is disabled, attempting to enable it...")
+        if service_running != 0:
+            logger.info("System Restore service is not running, attempting to enable it...")
             enable_service_commands = [
                 'Set-Service -Name "VSS" -StartupType Automatic -ErrorAction SilentlyContinue',
-                'Start-Service -Name "VSS" -ErrorAction SilentlyContinue',
-                'Set-Service -Name "VSS" -StartupType Automatic -ErrorAction SilentlyContinue'
+                'Start-Service -Name "VSS" -ErrorAction SilentlyContinue'
             ]
             
             for cmd in enable_service_commands:
@@ -139,12 +138,13 @@ def uninstall_uwp_apps():
         ]
         
         for app in apps_to_remove:
+            logger.debug(f"Attempting to remove {app}...")
             command = f'Get-AppxPackage -Name "{app}" | Remove-AppxPackage -ErrorAction SilentlyContinue; Get-AppxPackage -AllUsers -Name "{app}" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue'
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result == 0:
                 logger.info(f"Removed {app}")
             else:
-                logger.debug(f"Could not remove {app} (possibly not installed)")
+                logger.debug(f"Could not remove {app} (possibly not installed or system app)")
         
         logger.info("UWP apps uninstallation completed")
         return True
@@ -166,7 +166,7 @@ def disable_cortana():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         
@@ -194,7 +194,7 @@ def disable_telemetry():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         
@@ -221,7 +221,7 @@ def remove_onedrive():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         

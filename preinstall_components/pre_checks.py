@@ -67,7 +67,7 @@ def _run_test_script(script_path: str) -> bool:
         )
         output = result.stdout.strip()
         logger.debug(f"Test script output: {output}")
-        if result.returncode == 0 and "Hello, World!" in output:
+        if result.returncode == 0 and "Test script executed successfully!" in output:
             return True
     except Exception as e:
         logger.error(f"Running test PowerShell script failed: {e}")

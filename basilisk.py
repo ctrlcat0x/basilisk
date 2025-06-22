@@ -151,17 +151,32 @@ def _update_status(label: UIHeaderText, message: str):
 
 def main(argv=None):
     args = parse_args(argv)
+    logger.info(f"Running in developer mode: {args.developer_mode}")
     ensure_admin()
     pre_checks.main()
     app = None
     status_label = None
     if not args.developer_mode:
-        app, status_label = _build_install_ui()
+        logger.info("Building installation UI...")
+        try:
+            app, status_label = _build_install_ui()
+            logger.info("Installation UI built successfully")
+        except Exception as e:
+            logger.error(f"Failed to build installation UI: {e}")
+            logger.warning("Falling back to developer mode")
+            args.developer_mode = True
+    else:
+        logger.info("Running in developer mode - no UI overlay")
 
     def debloat_sequence():
         # Step 0: Create restore point before any debloat
         _update_status(status_label, "Creating a system restore point...")
-        create_restore_point_first()
+        try:
+            create_restore_point_first()
+        except Exception as e:
+            logger.error(f"Error creating restore point: {e}")
+            logger.warning("Continuing without restore point...")
+        
         # Main debloat steps
         for slug, message, func in DEBLOAT_STEPS:
             if getattr(args, f"skip_{slug.replace('-', '_')}_step"):
@@ -170,17 +185,27 @@ def main(argv=None):
             _update_status(status_label, message)
             try:
                 func()
-            except Exception:
-                return
+                logger.info(f"Completed {slug} step successfully")
+            except Exception as e:
+                logger.error(f"Error in {slug} step: {e}")
+                logger.warning(f"Continuing to next step despite error in {slug}")
+                continue
+        
         # After background is applied, clean temp files
         _update_status(status_label, "Cleaning up temporary files...")
-        debloat_advanced_optimizations.clean_temp_files()
+        try:
+            debloat_advanced_optimizations.clean_temp_files()
+        except Exception as e:
+            logger.error(f"Error cleaning temp files: {e}")
+        
         _update_status(status_label, "Restarting system…")
         subprocess.call(["shutdown", "/r", "/t", "0"])
 
     if args.developer_mode:
+        logger.info("Starting debloat sequence in developer mode")
         debloat_sequence()
     else:
+        logger.info("Starting debloat sequence with UI overlay")
         def start_thread():
             threading.Thread(target=debloat_sequence, daemon=True).start()
         QTimer.singleShot(0, start_thread)
