@@ -13,7 +13,7 @@ class UIParagraphText(QLabel):
         color: str = "#FFFFFF",
         alignment="left"
     ):
-        load_font("Rockstar-ExtraBold.otf")
+        load_font("SpaceGrotesk-Regular.ttf")
         super().__init__(parent)
         self.setWordWrap(True)
         self.setText(text)

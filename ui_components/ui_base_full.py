@@ -9,7 +9,7 @@ from utilities.util_logger import logger
 
 class UIBaseFull:
     def __init__(self):
-        load_font("Rockstar-ExtraBold.otf")
+        load_font("SpaceGrotesk-Regular.ttf")
         logger.info("UIBaseFull: Creating overlays...")
         self._create_overlays()
 

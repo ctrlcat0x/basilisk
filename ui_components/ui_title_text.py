@@ -5,7 +5,7 @@ from utilities.util_load_font import load_font
 
 class UITitleText(QLabel):
     def __init__(self, text: str, parent=None, top_margin: int = 100, font_size: int = 36):
-        base_font = load_font("Rockstar-ExtraBold.otf")
+        base_font = load_font("SpaceGrotesk-Regular.ttf")
         super().__init__(text, parent)
         family = base_font.family()
         font = QFont(family, font_size, QFont.Bold)

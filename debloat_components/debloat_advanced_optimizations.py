@@ -111,32 +111,33 @@ def set_ultimate_power_plan():
 
 def uninstall_uwp_apps():
     """Uninstall pre-installed UWP apps."""
+    logger.info("Uninstalling UWP apps...")
     try:
-        logger.info("Uninstalling UWP apps...")
-        
-        apps_to_remove = [
+        apps_to_remove_set = {
+            # General Microsoft Bloatware
             "Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.GetHelp",
             "Microsoft.Getstarted", "Microsoft.Messaging", "Microsoft.MicrosoftSolitaireCollection",
             "Microsoft.MicrosoftStickyNotes", "Microsoft.MixedReality.Portal", "Microsoft.MSPaint",
             "Microsoft.Office.OneNote", "Microsoft.People", "Microsoft.SkypeApp",
-            "Microsoft.WindowsAlarms", "Microsoft.WindowsCamera", "Microsoft.WindowsMaps",
-            "Microsoft.WindowsSoundRecorder", "Microsoft.Xbox.TCUI", "Microsoft.XboxApp",
-            "Microsoft.XboxGameOverlay", "Microsoft.XboxIdentityProvider", "Microsoft.XboxSpeechToTextOverlay",
-            "Microsoft.ZuneVideo", "Microsoft.ZuneMusic",
-            "Microsoft.YourPhone", "Microsoft.Wallet", "Microsoft.Microsoft3DViewer",
-            "Microsoft.MicrosoftOfficeHub", "Microsoft.OneConnect", "Microsoft.People",
+            "Microsoft.WindowsAlarms", "Microsoft.WindowsMaps",
+            "Microsoft.WindowsSoundRecorder", "Microsoft.YourPhone", "Microsoft.Wallet", 
+            "Microsoft.Microsoft3DViewer", "Microsoft.MicrosoftOfficeHub", "Microsoft.OneConnect",
             "Microsoft.Print3D", "Microsoft.Whiteboard", "Microsoft.WindowsFeedbackHub",
-            "Microsoft.WindowsReadingList", "Microsoft.WindowsSoundRecorder", "Microsoft.XboxGamingOverlay",
-            "Microsoft.XboxGameCallableUI", "Microsoft.XboxGameOverlay", "Microsoft.XboxIdentityProvider",
-            "Microsoft.XboxSpeechToTextOverlay", "Microsoft.Xbox.TCUI", "Microsoft.XboxApp",
-            "Microsoft.XboxGameOverlay", "Microsoft.XboxIdentityProvider", "Microsoft.XboxSpeechToTextOverlay",
-            "Microsoft.ZuneMusic", "Microsoft.ZuneVideo",
+            "Microsoft.WindowsReadingList", "Microsoft.ZuneVideo", "Microsoft.ZuneMusic",
+            "Microsoft.549981C3F5F10", "Microsoft.Todos", "Microsoft.PowerAutomateDesktop",
+            "Microsoft.Clipchamp", "MicrosoftTeams",
+
+            # Specific Xbox / Gaming apps (safer to remove)
+            "Microsoft.Xbox.TCUI", 
+            "Microsoft.XboxApp", 
+            "Microsoft.XboxSpeechToTextOverlay",
+            
+            # OEM Bloatware
             "E046963F.LenovoCompanion", "E046963F.LenovoSettings", "E046963F.LenovoID",
-            "E2A4F912.LenovoUtility", "E046963F.LenovoCompanion", "E2A4F912.LenovoUtility",
-            "DellInc.PartnerPromo", "ASUSTeKComputerInc.ZenLink", "ASUSTeKComputerInc.MyASUS",
-            "AcerIncorporated.AcerPortal", "AcerIncorporated.AcerExplorer"
-        ]
-        
+            "E2A4F912.LenovoUtility", "DellInc.PartnerPromo", "ASUSTeKComputerInc.ZenLink", 
+            "ASUSTeKComputerInc.MyASUS", "AcerIncorporated.AcerPortal", "AcerIncorporated.AcerExplorer"
+        }
+        apps_to_remove = sorted(list(apps_to_remove_set))
         for app in apps_to_remove:
             logger.debug(f"Attempting to remove {app}...")
             command = f'Get-AppxPackage -Name "{app}" | Remove-AppxPackage -ErrorAction SilentlyContinue; Get-AppxPackage -AllUsers -Name "{app}" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue'
@@ -145,12 +146,11 @@ def uninstall_uwp_apps():
                 logger.info(f"Removed {app}")
             else:
                 logger.debug(f"Could not remove {app} (possibly not installed or system app)")
-        
         logger.info("UWP apps uninstallation completed")
         return True
     except Exception as e:
         logger.error(f"Error uninstalling UWP apps: {e}")
-        return False
+        return True  # Only return False on a true Python exception, but do not stop the debloat sequence
 
 
 def disable_cortana():

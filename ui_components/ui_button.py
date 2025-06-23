@@ -8,7 +8,7 @@ from utilities.util_load_font import load_font
 class UIButton(QPushButton):
 
     def __init__(self, text: str, color_rgb: tuple, parent=None):
-        load_font("Rockstar-ExtraBold.otf")
+        load_font("SpaceGrotesk-Regular.ttf")
         super().__init__(text, parent)
         self.setCursor(Qt.PointingHandCursor)  # type: ignore
         r, g, b = color_rgb

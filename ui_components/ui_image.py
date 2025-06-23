@@ -16,7 +16,7 @@ class UIImage(QLabel):
         parent=None,
         horizontal_buffer: float = 0.3
     ):
-        load_font("Rockstar-ExtraBold.otf")
+        load_font("SpaceGrotesk-Regular.ttf")
         super().__init__("", parent)
         self.setAlignment(Qt.AlignCenter)  # type: ignore
         self.setStyleSheet("background: transparent;")

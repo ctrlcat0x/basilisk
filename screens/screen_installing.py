@@ -48,7 +48,7 @@ def main():
         overlay = base.overlays[0]
     for overlay in base.overlays:
         overlay.setWindowOpacity(0.8)
-    title_label = UITitleText("Installing Basilisk...", parent=overlay)
+    title_label = UITitleText("Initializing Basilisk...", parent=overlay)
     UIHeaderText(
         "Please don't use your keyboard or mouse. You can watch as Basilisk works.",
         parent=overlay,

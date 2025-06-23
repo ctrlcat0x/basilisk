@@ -144,7 +144,7 @@ Provides the main window framework with overlay capabilities.
 - Full-screen overlay during installation
 - Progress tracking display
 - Error message handling
-- Consistent styling with Rockstar font
+- Consistent styling with Space Grotesk font
 
 #### Text Components
 
