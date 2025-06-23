@@ -51,7 +51,7 @@
 Run Basilisk directly from GitHub with a single command:
 
 ```powershell
-iex (irm https://raw.githubusercontent.com/ctrlcat0x/basilisk/master/scripts/run.ps1)
+iex (irm https://raw.githubusercontent.com/ctrlcat0x/basilisk/master/run.ps1)
 ```
 
 **Requirements:**
