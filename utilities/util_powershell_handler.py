@@ -204,7 +204,10 @@ def run_powershell_command(
             f"PowerShell command failed (exit code {rc})",
             allow_continue=allow_continue_on_fail,
         )
-        raise RuntimeError(f"PowerShell command failed (code {rc})")
+        if not allow_continue_on_fail:
+            raise RuntimeError(
+                f"PowerShell command failed (code {rc})"
+            )
     else:
         logger.debug(f"PowerShell completed successfully (code {rc})")
     return rc

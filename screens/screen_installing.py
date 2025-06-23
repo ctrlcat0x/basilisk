@@ -43,9 +43,11 @@ class StatusResizer(QObject):
 def main():
     app = QApplication.instance() or QApplication(sys.argv)
     base = UIBaseFull()
+    overlay = base.primary_overlay
+    if overlay is None:
+        overlay = base.overlays[0]
     for overlay in base.overlays:
         overlay.setWindowOpacity(0.8)
-    overlay = base.primary_overlay
     title_label = UITitleText("Installing Basilisk...", parent=overlay)
     UIHeaderText(
         "Please don't use your keyboard or mouse. You can watch as Basilisk works.",

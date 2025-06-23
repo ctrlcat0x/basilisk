@@ -96,6 +96,7 @@ def parse_args(argv=None):
 
 def _build_install_ui():
     """Create the installation window and return (app, status_label)."""
+    logger.info("_build_install_ui: Initializing QApplication and UIBaseFull...")
     app = QApplication.instance() or QApplication(sys.argv)
     base = UIBaseFull()
     for overlay in base.overlays:
@@ -131,6 +132,7 @@ def _build_install_ui():
             self.label.setGeometry(0, y, w, h)
 
     StatusResizer(overlay, status_label, bottom_margin=title_label._top_margin)
+    logger.info("_build_install_ui: Showing UI overlays...")
     base.show()
     status_label.raise_()
     return app, status_label
@@ -221,7 +223,11 @@ def main(argv=None):
         def start_thread():
             threading.Thread(target=debloat_sequence, daemon=True).start()
         QTimer.singleShot(0, start_thread)
-        sys.exit(app.exec_())  # type: ignore
+        logger.info("Calling app.exec_() to start event loop...")
+        try:
+            sys.exit(app.exec_())  # type: ignore
+        except Exception as e:
+            logger.error(f"Exception in app.exec_(): {e}")
 
 if __name__ == "__main__":
     main()
