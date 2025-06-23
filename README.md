@@ -1,4 +1,4 @@
-# <img src="./media/icon.png" alt="Basilisk Banner" width="30"> Basilisk - Windows 11 Debloating Utility
+# <p align="center">Basilisk - Windows 11 Debloating Utility </p>
 
 <p align="center">
   <img src="banner.png" alt="Basilisk Banner" width="800">
