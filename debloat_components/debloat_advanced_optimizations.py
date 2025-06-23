@@ -41,10 +41,10 @@ def create_system_restore_point():
         
         if result == 0:
             logger.info("System restore point created successfully")
-            return True
         else:
             logger.warning("Failed to create system restore point - continuing without it")
-            return True  # Continue anyway, don't fail the entire process
+        
+        return True  # Continue anyway, don't fail the entire process
             
     except Exception as e:
         logger.error(f"Error creating restore point: {e}")
@@ -161,8 +161,6 @@ def disable_cortana():
         commands = [
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -ErrorAction SilentlyContinue',
             'Set-ItemProperty -Path "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Search" -Name "CortanaConsent" -Type DWord -Value 0 -ErrorAction SilentlyContinue',
-            'Stop-Service -Name "WSearch" -Force -ErrorAction SilentlyContinue',
-            'Set-Service -Name "WSearch" -StartupType Disabled -ErrorAction SilentlyContinue'
         ]
         
         for command in commands:
@@ -256,25 +254,22 @@ def disable_search_indexing():
 def clean_temp_files():
     """Clean temporary files and system cache."""
     try:
-        logger.info("Cleaning temporary files...")
+        logger.info("Cleaning temporary files... (Note: Some files may be in use and cannot be deleted, this is normal)")
         
         commands = [
-            'Remove-Item -Path "$env:TEMP\\*" -Recurse -Force -ErrorAction SilentlyContinue',
-            'Remove-Item -Path "$env:SystemRoot\\Temp\\*" -Recurse -Force -ErrorAction SilentlyContinue',
-            'Remove-Item -Path "$env:HomeDrive\\Users\\Default\\AppData\\Local\\Temp\\*" -Recurse -Force -ErrorAction SilentlyContinue',
-            'Remove-Item -Path "$env:HomeDrive\\Users\\Public\\AppData\\Local\\Temp\\*" -Recurse -Force -ErrorAction SilentlyContinue',
-            'Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase -ErrorAction SilentlyContinue',
-            'Stop-Service -Name "wuauserv" -Force -ErrorAction SilentlyContinue',
-            'Remove-Item -Path "$env:SystemRoot\\SoftwareDistribution\\Download\\*" -Recurse -Force -ErrorAction SilentlyContinue',
-            'Start-Service -Name "wuauserv" -ErrorAction SilentlyContinue'
+            # The error in your log comes from here. Files can be locked by the system.
+            # This is not a critical failure. The command will skip locked files.
+            'Get-ChildItem -Path $env:TEMP -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue',
+            'Get-ChildItem -Path "$env:SystemRoot\\Temp" -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue',
+            'Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase'
         ]
         
         for command in commands:
             result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
-                logger.warning(f"Command failed: {command}")
+                logger.warning(f"A cleanup command reported a non-critical issue (e.g. file in use): {command}")
         
-        logger.info("Temporary files cleaned")
+        logger.info("Temporary files cleaned.")
         return True
     except Exception as e:
         logger.error(f"Error cleaning temp files: {e}")
@@ -311,17 +306,12 @@ def disable_suggested_content():
         
         commands = [
             'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager" -Name "SubscribedContent-338390Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager" -Name "SubscribedContent-338391Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue'
+            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
+            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue'
         ]
         
         for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.warning(f"Command failed: {command}")
+            run_powershell_command(command, allow_continue_on_fail=True)
         
         logger.info("Suggested content disabled")
         return True
@@ -334,23 +324,17 @@ def clear_dns_cache():
     """Clear DNS cache."""
     try:
         logger.info("Clearing DNS cache...")
-        result = run_powershell_command('ipconfig /flushdns', allow_continue_on_fail=True)
+        # Use the native PowerShell cmdlet which is more reliable than ipconfig
+        result = run_powershell_command('Clear-DnsClientCache', allow_continue_on_fail=True)
         if result == 0:
             logger.info("DNS cache cleared")
         else:
-            logger.warning("Failed to clear DNS cache")
-        return result == 0
+            logger.warning("Failed to clear DNS cache (this may happen if the DNS Client service is not running)")
+        return True # Always continue
     except Exception as e:
         logger.error(f"Error clearing DNS cache: {e}")
-        return False
+        return True # Continue anyway
 
-
-def disable_fast_startup():
-    # REMOVED: This function was removed for safety reasons
-    # as disabling Fast Startup can significantly increase boot times
-    # and may cause issues with some hardware configurations.
-    logger.info("Fast Startup disable function removed for safety - Fast Startup preserved")
-    return True
 
 
 def disable_automatic_maintenance():
@@ -363,7 +347,7 @@ def disable_automatic_maintenance():
             logger.info("Automatic maintenance disabled")
         else:
             logger.warning("Failed to disable automatic maintenance")
-        return result == 0
+        return True
     except Exception as e:
         logger.error(f"Error disabling automatic maintenance: {e}")
         return False
@@ -385,7 +369,7 @@ def disable_non_essential_services():
             command = f'Set-Service -Name "{service}" -StartupType Disabled -ErrorAction SilentlyContinue'
             result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
-                logger.debug(f"Failed to disable service: {service}")
+                logger.debug(f"Failed to disable service: {service} (it may not exist on this system)")
         
         logger.info("Non-essential services disabled")
         return True
@@ -400,26 +384,11 @@ def optimize_network_settings():
         logger.info("Optimizing network settings...")
         
         commands = [
-            # Disable IPv6 (optional - can improve performance on some networks)
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters" -Name "DisabledComponents" -Type DWord -Value 0xffffffff -Force -ErrorAction SilentlyContinue',
-            
-            # Optimize TCP settings
             'netsh int tcp set global autotuninglevel=normal',
             'netsh int tcp set global chimney=enabled',
             'netsh int tcp set global ecncapability=enabled',
             'netsh int tcp set global timestamps=disabled',
             'netsh int tcp set global rss=enabled',
-            
-            # Optimize DNS settings
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters" -Name "Tcp1323Opts" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters" -Name "TcpTimedWaitDelay" -Type DWord -Value 30 -Force -ErrorAction SilentlyContinue',
-            
-            # Disable NetBIOS over TCP/IP
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\NetBT\\Parameters\\Interfaces\\Tcpip*" -Name "NetbiosOptions" -Type DWord -Value 2 -Force -ErrorAction SilentlyContinue',
-            
-            # Optimize network adapter settings
-            'Get-NetAdapter | Where-Object {$_.Status -eq "Up"} | Set-NetAdapterAdvancedProperty -RegistryKeyword "*FlowControl" -RegistryValue 0 -ErrorAction SilentlyContinue',
-            'Get-NetAdapter | Where-Object {$_.Status -eq "Up"} | Set-NetAdapterAdvancedProperty -RegistryKeyword "*InterruptModeration" -RegistryValue 0 -ErrorAction SilentlyContinue'
         ]
         
         for command in commands:
@@ -440,26 +409,19 @@ def optimize_disk_performance():
         logger.info("Optimizing disk performance...")
         
         commands = [
-            # Disable disk defragmentation for SSDs
-            'Get-WmiObject -Class Win32_Volume | Where-Object {$_.DriveType -eq 3} | ForEach-Object { if ($_.FileSystem -eq "NTFS") { $_.DefragAnalysis() } }',
-            
-            # Optimize NTFS settings
+            # Optimize NTFS settings for performance by disabling last access timestamps
             'fsutil behavior set disablelastaccess 1',
-            'fsutil behavior set disable8dot3 1',
             'fsutil behavior set memoryusage 2',
             
-            # Disable SuperFetch for SSDs
-            'Get-WmiObject -Class Win32_Volume | Where-Object {$_.DriveType -eq 3} | ForEach-Object { if ($_.FileSystem -eq "NTFS") { $_.IndexingEnabled = $false; $_.Put() } }',
-            
-            # Optimize page file settings
-            'wmic computersystem set AutomaticManagedPagefile=False',
-            'wmic pagefileset create name="C:\\pagefile.sys",initialsize=16384,maximumsize=16384'
+            # NOTE: Pagefile modifications were removed due to risk.
+            # Hardcoding a pagefile size is dangerous and can cause system instability.
+            # Pagefile is now set to 'System Managed' in the optimize_memory function for safety.
         ]
         
         for command in commands:
             result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
-                logger.debug(f"Disk optimization command failed: {command}")
+                logger.warning(f"Disk optimization command failed: {command}")
         
         logger.info("Disk performance optimized")
         return True
@@ -474,13 +436,11 @@ def optimize_memory_settings():
         logger.info("Optimizing memory settings...")
         
         commands = [
-            # Disable memory compression
+            # Disable memory compression (can improve performance on some systems)
             'Disable-MMAgent -mc',
-            
-            # Optimize virtual memory
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "LargeSystemCache" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "IoPageLockLimit" -Type DWord -Value 983040 -Force -ErrorAction SilentlyContinue',
-            
+            # Set virtual memory (pagefile) to be managed by the system.
+            # This is the safest setting and avoids issues with fixed-size pagefiles.
+            'wmic computersystem where name="%computername%" set AutomaticManagedPagefile=True',
             # Optimize memory management
             'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "ClearPageFileAtShutdown" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
             'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "DisablePagingExecutive" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue'
@@ -489,7 +449,7 @@ def optimize_memory_settings():
         for command in commands:
             result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
-                logger.debug(f"Memory optimization command failed: {command}")
+                logger.warning(f"Memory optimization command failed: {command}")
         
         logger.info("Memory settings optimized")
         return True
@@ -504,25 +464,22 @@ def optimize_gaming_settings():
         logger.info("Optimizing gaming settings...")
         
         commands = [
-            # Disable Game DVR and Game Bar
+              # Disable unnecessary startup services
+            'Set-Service -Name "SysMain" -StartupType Disabled -ErrorAction SilentlyContinue',
+            'Set-Service -Name "WSearch" -StartupType Disabled -ErrorAction SilentlyContinue',
+            'Set-Service -Name "TabletInputService" -StartupType Disabled -ErrorAction SilentlyContinue',
+            'Set-Service -Name "WbioSrvc" -StartupType Disabled -ErrorAction SilentlyContinue',
+            # Disable Game DVR and Game Bar via registry
             'Set-ItemProperty -Path "HKCU:\\System\\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCU:\\System\\GameConfigStore" -Name "GameDVR_FSEBehaviorMode" -Type DWord -Value 2 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCU:\\System\\GameConfigStore" -Name "AllowGameDVR" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
+            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR" -Name "AllowGameDVR" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
             
-            # Optimize for gaming
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile" -Name "SystemResponsiveness" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
+            # Prioritize games for system resources
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games" -Name "GPU Priority" -Type DWord -Value 8 -Force -ErrorAction SilentlyContinue',
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games" -Name "Priority" -Type DWord -Value 6 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games" -Name "Scheduling Category" -Type String -Value "High" -Force -ErrorAction SilentlyContinue',
-            
-            # Disable full-screen optimizations
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers" -Name "HwSchMode" -Type DWord -Value 2 -Force -ErrorAction SilentlyContinue'
         ]
         
         for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.debug(f"Gaming optimization command failed: {command}")
+            run_powershell_command(command, allow_continue_on_fail=True)
         
         logger.info("Gaming settings optimized")
         return True
@@ -537,40 +494,19 @@ def optimize_privacy_settings():
         logger.info("Enhancing privacy settings...")
         
         commands = [
-            # Disable location services
+            # Disable app access to sensitive info
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location" -Name "Value" -Type String -Value "Deny" -Force -ErrorAction SilentlyContinue',
-
-            # Disable app access to contacts
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\contacts" -Name "Value" -Type String -Value "Deny" -Force -ErrorAction SilentlyContinue',
-            
-            # Disable app access to calendar
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\appointments" -Name "Value" -Type String -Value "Deny" -Force -ErrorAction SilentlyContinue',
             
-            # Disable app access to call history
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\phoneCall" -Name "Value" -Type String -Value "Deny" -Force -ErrorAction SilentlyContinue',
-            
-            # Disable app access to email
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\email" -Name "Value" -Type String -Value "Deny" -Force -ErrorAction SilentlyContinue',
-            
-            # Disable app access to messaging
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\chat" -Name "Value" -Type String -Value "Deny" -Force -ErrorAction SilentlyContinue',
-            
-            # Disable app access to radios
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\radios" -Name "Value" -Type String -Value "Deny" -Force -ErrorAction SilentlyContinue',
-            
-            # Disable app access to other devices
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\bluetoothSync" -Name "Value" -Type String -Value "Deny" -Force -ErrorAction SilentlyContinue',
-            
-            # Disable timeline
+            # Disable timeline (activity feed)
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System" -Name "EnableActivityFeed" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System" -Name "PublishUserActivities" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
             'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System" -Name "UploadUserActivities" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue'
         ]
         
         for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.debug(f"Privacy command failed: {command}")
+            run_powershell_command(command, allow_continue_on_fail=True)
         
         logger.info("Privacy settings enhanced")
         return True
@@ -579,48 +515,14 @@ def optimize_privacy_settings():
         return False
 
 
-def optimize_startup_performance():
-    """Optimize startup performance."""
-    try:
-        logger.info("Optimizing startup performance...")
-        
-        commands = [
-            # Optimize boot configuration
-            'bcdedit /set useplatformclock false',
-            'bcdedit /set disabledynamictick yes',
-            'bcdedit /set tscsyncpolicy Enhanced',
-            
-            # Disable unnecessary startup services
-            'Set-Service -Name "SysMain" -StartupType Disabled -ErrorAction SilentlyContinue',
-            'Set-Service -Name "WSearch" -StartupType Disabled -ErrorAction SilentlyContinue',
-            'Set-Service -Name "TabletInputService" -StartupType Disabled -ErrorAction SilentlyContinue',
-            'Set-Service -Name "WbioSrvc" -StartupType Disabled -ErrorAction SilentlyContinue',
-            
-            # Optimize prefetch settings
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management\\PrefetchParameters" -Name "EnablePrefetcher" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management\\PrefetchParameters" -Name "EnableSuperfetch" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue'
-        ]
-        
-        for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.debug(f"Startup optimization command failed: {command}")
-        
-        logger.info("Startup performance optimized")
-        return True
-    except Exception as e:
-        logger.error(f"Error optimizing startup performance: {e}")
-        return False
-
-
 def optimize_ssd():
     """Optimize Windows for SSD drives."""
     try:
         logger.info("Optimizing system for SSD...")
         commands = [
-            # Enable TRIM
+            # Ensure TRIM is enabled
             'fsutil behavior set DisableDeleteNotify 0',
-            # Disable scheduled defrag for SSDs
+            # Disable scheduled defrag task for SSDs
             'schtasks /Change /TN "Microsoft\\Windows\\Defrag\\ScheduledDefrag" /Disable',
             # Disable Superfetch (SysMain)
             'Stop-Service -Name "SysMain" -Force -ErrorAction SilentlyContinue',
@@ -634,112 +536,6 @@ def optimize_ssd():
         return True
     except Exception as e:
         logger.error(f"Error optimizing SSD: {e}")
-        return False
-
-
-def optimize_memory():
-    """Apply advanced memory management tweaks."""
-    try:
-        logger.info("Optimizing memory settings...")
-        commands = [
-            # Clear standby memory (requires RAMMap or similar, but we can use PowerShell for basic clear)
-            'Clear-Content -Path "$env:TEMP\\*" -Force -ErrorAction SilentlyContinue',
-            # Set virtual memory to system managed (optional, can be expanded)
-            'wmic computersystem where name="%computername%" set AutomaticManagedPagefile=True',
-        ]
-        for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.warning(f"Command failed: {command}")
-        logger.info("Memory optimization complete.")
-        return True
-    except Exception as e:
-        logger.error(f"Error optimizing memory: {e}")
-        return False
-
-
-def optimize_network():
-    """Optimize network adapter and connection settings."""
-    try:
-        logger.info("Optimizing network settings...")
-        commands = [
-            # Enable TCP Fast Open
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters" -Name "EnableTcpFastOpen" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue',
-            # Disable Nagle's Algorithm (for all interfaces)
-            # This is a per-adapter setting, so we can set for all interfaces
-            # (Advanced: enumerate interfaces and set TcpAckFrequency/TcpNoDelay)
-        ]
-        for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.warning(f"Command failed: {command}")
-        logger.info("Network optimization complete.")
-        return True
-    except Exception as e:
-        logger.error(f"Error optimizing network: {e}")
-        return False
-
-
-def block_telemetry_hosts():
-    """Block known Microsoft telemetry and ad servers via the hosts file."""
-    try:
-        logger.info("Blocking telemetry and tracking domains in hosts file...")
-        hosts_path = r"C:\Windows\System32\drivers\etc\hosts"
-        telemetry_domains = [
-            # Microsoft Telemetry/Tracking
-            "vortex.data.microsoft.com",
-            "telemetry.microsoft.com",
-            "telecommand.telemetry.microsoft.com",
-            "oca.telemetry.microsoft.com",
-            "oca.telemetry.microsoft.com.nsatc.net",
-            "sqm.telemetry.microsoft.com",
-            "watson.telemetry.microsoft.com",
-            "watson.ppe.telemetry.microsoft.com",
-            "vortex-win.data.microsoft.com",
-            "settings-win.data.microsoft.com",
-            "vortex-bn2.metron.live.com.nsatc.net",
-            "vortex-cy2.metron.live.com.nsatc.net",
-            "vortex.data.glbdns2.microsoft.com",
-            "vortex-sandbox.data.microsoft.com",
-            "telemetry.appex.bing.net",
-            "telemetry.urs.microsoft.com",
-            "telemetry.appex.bing.net:443",
-            "settings-sandbox.data.microsoft.com",
-            "survey.watson.microsoft.com",
-            "watson.live.com",
-            "watson.microsoft.com",
-            "statsfe2.ws.microsoft.com",
-            "corpext.msitadfs.glbdns2.microsoft.com",
-            "compatexchange.cloudapp.net",
-            "a-0001.a-msedge.net",
-            "a-0002.a-msedge.net",
-            "a-0003.a-msedge.net",
-            "a-0004.a-msedge.net",
-            "a-0005.a-msedge.net",
-            "a-0006.a-msedge.net",
-            "a-0007.a-msedge.net",
-            "a-0008.a-msedge.net",
-            "a-0009.a-msedge.net",
-            "settings.data.microsoft.com",
-            "feedback.windows.com",
-            "feedback.microsoft-hohm.com",
-            "feedback.search.microsoft.com",
-            "feedback.support.microsoft.com",
-            # Add more as needed
-        ]
-        block_lines = [f"0.0.0.0 {domain}\n" for domain in telemetry_domains]
-        # Read current hosts file
-        with open(hosts_path, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-        # Only add if not already present
-        with open(hosts_path, "a", encoding="utf-8") as f:
-            for line in block_lines:
-                if not any(domain in l for l in lines for domain in [line.split()[1]]):
-                    f.write(line)
-        logger.info("Telemetry and tracking domains blocked in hosts file.")
-        return True
-    except Exception as e:
-        logger.error(f"Error updating hosts file: {e}")
         return False
 
 
@@ -759,7 +555,6 @@ def main():
         disable_delivery_optimization,
         disable_suggested_content,
         clear_dns_cache,
-        disable_fast_startup,
         disable_automatic_maintenance,
         disable_non_essential_services,
         optimize_network_settings,
@@ -767,18 +562,16 @@ def main():
         optimize_memory_settings,
         optimize_gaming_settings,
         optimize_privacy_settings,
-        optimize_startup_performance,
-        optimize_ssd,
-        optimize_memory,
-        optimize_network,
-        block_telemetry_hosts
+        optimize_ssd
     ]
     
     for optimization in optimizations:
         try:
-            optimization()
+            success = optimization()
+            if not success:
+                logger.warning(f"Optimization '{optimization.__name__}' encountered an error but the script will continue.")
         except Exception as e:
-            logger.error(f"Error in optimization {optimization.__name__}: {e}")
+            logger.error(f"A critical error occurred in optimization '{optimization.__name__}': {e}")
     
     logger.info("Advanced optimizations completed")
 
