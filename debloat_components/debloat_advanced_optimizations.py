@@ -59,7 +59,7 @@ def set_ultimate_power_plan():
         
         # Check if Ultimate Performance plan exists in the list
         list_command = 'powercfg /list | Select-String "Ultimate Performance"'
-        list_result = run_powershell_command(list_command)
+        list_result = run_powershell_command(list_command, allow_continue_on_fail=True)
         
         # If Ultimate Performance is NOT in the list, try to add it
         if list_result != 0:
@@ -67,13 +67,13 @@ def set_ultimate_power_plan():
             
             # Try to duplicate the Ultimate Performance scheme (this only works if it exists in the system)
             duplicate_command = 'powercfg -duplicatescheme 06306d31-12c8-4900-86c3-92406571b6fe'
-            duplicate_result = run_powershell_command(duplicate_command)
+            duplicate_result = run_powershell_command(duplicate_command, allow_continue_on_fail=True)
             
             if duplicate_result == 0:
                 logger.info("Ultimate Performance plan added successfully")
                 # Now try to enable it
                 enable_command = 'powercfg -setactive 06306d31-12c8-4900-86c3-92406571b6fe'
-                enable_result = run_powershell_command(enable_command)
+                enable_result = run_powershell_command(enable_command, allow_continue_on_fail=True)
                 if enable_result == 0:
                     logger.info("Ultimate Performance power plan enabled")
                 else:
@@ -82,7 +82,7 @@ def set_ultimate_power_plan():
                 logger.info("Ultimate Performance plan is not available on this system")
                 # Try to enable it directly anyway (in case it exists but wasn't found by name)
                 enable_command = 'powercfg -setactive 06306d31-12c8-4900-86c3-92406571b6fe'
-                enable_result = run_powershell_command(enable_command)
+                enable_result = run_powershell_command(enable_command, allow_continue_on_fail=True)
                 if enable_result == 0:
                     logger.info("Ultimate Performance power plan enabled via GUID")
                 else:
@@ -90,12 +90,12 @@ def set_ultimate_power_plan():
         else:
             # Ultimate Performance is in the list, check if it's already active
             current_plan_command = 'powercfg /getactivescheme | Select-String "06306d31-12c8-4900-86c3-92406571b6fe"'
-            current_result = run_powershell_command(current_plan_command)
+            current_result = run_powershell_command(current_plan_command, allow_continue_on_fail=True)
             
             if current_result != 0:
                 # Enable Ultimate Performance plan
                 enable_command = 'powercfg -setactive 06306d31-12c8-4900-86c3-92406571b6fe'
-                result = run_powershell_command(enable_command)
+                result = run_powershell_command(enable_command, allow_continue_on_fail=True)
                 if result == 0:
                     logger.info("Ultimate Performance power plan enabled")
                 else:
@@ -205,32 +205,6 @@ def disable_telemetry():
         return False
 
 
-def remove_onedrive():
-    """Remove OneDrive integration."""
-    try:
-        logger.info("Removing OneDrive...")
-        
-        commands = [
-            'taskkill /f /im OneDrive.exe /fi "STATUS eq RUNNING" >$null 2>&1',
-            'if (Test-Path "$env:SystemRoot\\SysWOW64\\OneDriveSetup.exe") { & "$env:SystemRoot\\SysWOW64\\OneDriveSetup.exe" /uninstall }',
-            'if (Test-Path "$env:SystemRoot\\System32\\OneDriveSetup.exe") { & "$env:SystemRoot\\System32\\OneDriveSetup.exe" /uninstall }',
-            'Remove-Item -Path "$env:LocalAppData\\Microsoft\\OneDrive" -Recurse -Force -ErrorAction SilentlyContinue',
-            'Remove-Item -Path "$env:ProgramData\\Microsoft OneDrive" -Recurse -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCR:\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCR:\\Wow6432Node\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Force -ErrorAction SilentlyContinue'
-        ]
-        
-        for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.warning(f"Command failed: {command}")
-        
-        logger.info("OneDrive removed")
-        return True
-    except Exception as e:
-        logger.error(f"Error removing OneDrive: {e}")
-        return False
-
 
 def disable_taskbar_icons():
     """Disable taskbar icons and features."""
@@ -243,7 +217,7 @@ def disable_taskbar_icons():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         
@@ -265,7 +239,7 @@ def disable_ads_tracking():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         
@@ -290,7 +264,7 @@ def disable_search_indexing():
         Stop-Service -Name "WSearch" -Force -ErrorAction SilentlyContinue
         '''
         
-        result = run_powershell_command(command)
+        result = run_powershell_command(command, allow_continue_on_fail=True)
         if result == 0:
             logger.info("Search indexing disabled")
         else:
@@ -319,7 +293,7 @@ def clean_temp_files():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         
@@ -342,7 +316,7 @@ def disable_delivery_optimization():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         
@@ -368,7 +342,7 @@ def disable_suggested_content():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         
@@ -383,7 +357,7 @@ def clear_dns_cache():
     """Clear DNS cache."""
     try:
         logger.info("Clearing DNS cache...")
-        result = run_powershell_command('ipconfig /flushdns')
+        result = run_powershell_command('ipconfig /flushdns', allow_continue_on_fail=True)
         if result == 0:
             logger.info("DNS cache cleared")
         else:
@@ -407,7 +381,7 @@ def disable_automatic_maintenance():
     try:
         logger.info("Disabling automatic maintenance...")
         command = 'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Schedule\\Maintenance" -Name "MaintenanceDisabled" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue'
-        result = run_powershell_command(command)
+        result = run_powershell_command(command, allow_continue_on_fail=True)
         if result == 0:
             logger.info("Automatic maintenance disabled")
         else:
@@ -432,7 +406,7 @@ def disable_non_essential_services():
         
         for service in services:
             command = f'Set-Service -Name "{service}" -StartupType Disabled -ErrorAction SilentlyContinue'
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.debug(f"Failed to disable service: {service}")
         
@@ -472,7 +446,7 @@ def optimize_network_settings():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.debug(f"Network command failed: {command}")
         
@@ -506,7 +480,7 @@ def optimize_disk_performance():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.debug(f"Disk optimization command failed: {command}")
         
@@ -536,7 +510,7 @@ def optimize_memory_settings():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.debug(f"Memory optimization command failed: {command}")
         
@@ -569,7 +543,7 @@ def optimize_gaming_settings():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.debug(f"Gaming optimization command failed: {command}")
         
@@ -617,7 +591,7 @@ def optimize_privacy_settings():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.debug(f"Privacy command failed: {command}")
         
@@ -651,7 +625,7 @@ def optimize_startup_performance():
         ]
         
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.debug(f"Startup optimization command failed: {command}")
         
@@ -676,7 +650,7 @@ def optimize_ssd():
             'Set-Service -Name "SysMain" -StartupType Disabled -ErrorAction SilentlyContinue',
         ]
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         logger.info("SSD optimization complete.")
@@ -697,7 +671,7 @@ def optimize_memory():
             'wmic computersystem where name="%computername%" set AutomaticManagedPagefile=True',
         ]
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         logger.info("Memory optimization complete.")
@@ -719,7 +693,7 @@ def optimize_network():
             # (Advanced: enumerate interfaces and set TcpAckFrequency/TcpNoDelay)
         ]
         for command in commands:
-            result = run_powershell_command(command)
+            result = run_powershell_command(command, allow_continue_on_fail=True)
             if result != 0:
                 logger.warning(f"Command failed: {command}")
         logger.info("Network optimization complete.")
@@ -802,7 +776,6 @@ def main():
         uninstall_uwp_apps,
         disable_cortana,
         disable_telemetry,
-        remove_onedrive,
         disable_taskbar_icons,
         disable_ads_tracking,
         disable_search_indexing,

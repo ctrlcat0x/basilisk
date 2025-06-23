@@ -102,32 +102,6 @@ function disableTelemetry {
     Write-Host "disableTelemetry function completed."
 }
 
-function removeOneDrive {
-    Write-Host "Executing removeOneDrive function..."
-    taskkill /f /im OneDrive.exe /fi "STATUS eq RUNNING" >$null 2>&1
-
-    $oneDriveSetup32 = "$env:SystemRoot\SysWOW64\OneDriveSetup.exe"
-    $oneDriveSetup64 = "$env:SystemRoot\System32\OneDriveSetup.exe"
-
-    if (Test-Path $oneDriveSetup32) {
-        & $oneDriveSetup32 /uninstall
-        Write-Host "Attempting to uninstall 32-bit OneDrive..."
-    }
-    if (Test-Path $oneDriveSetup64) {
-        & $oneDriveSetup64 /uninstall
-        Write-Host "Attempting to uninstall 64-bit OneDrive..."
-    }
-
-    Remove-Item -Path "$env:LocalAppData\Microsoft\OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path "$env:ProgramData\Microsoft OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
-
-    Set-ItemProperty -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Force -ErrorAction SilentlyContinue
-    Set-ItemProperty -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Force -ErrorAction SilentlyContinue
-    
-    Write-Host "OneDrive integration removed."
-    Write-Host "removeOneDrive function completed."
-}
-
 function disableTaskbarIcons {
     Write-Host "Executing disableTaskbarIcons function..."
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Feeds" -Name "ShellFeedsTaskbarViewMode" -Type DWord -Value 2 -Force -ErrorAction SilentlyContinue
@@ -260,7 +234,6 @@ function runAllOptimizations {
     uninstallUWPApps
     disableCortana
     disableTelemetry
-    removeOneDrive
     disableTaskbarIcons
     disableAdsTracking
     disableSearchIndexing
