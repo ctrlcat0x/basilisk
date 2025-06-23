@@ -205,29 +205,6 @@ def disable_telemetry():
         return False
 
 
-
-def disable_taskbar_icons():
-    """Disable taskbar icons and features."""
-    try:
-        logger.info("Disabling taskbar icons...")
-        
-        commands = [
-            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Feeds" -Name "ShellFeedsTaskbarViewMode" -Type DWord -Value 2 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings" -Name "NOC_GLOBAL_SETTING_MEETNOW_ENABLED" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue'
-        ]
-        
-        for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.warning(f"Command failed: {command}")
-        
-        logger.info("Taskbar icons disabled")
-        return True
-    except Exception as e:
-        logger.error(f"Error disabling taskbar icons: {e}")
-        return False
-
-
 def disable_ads_tracking():
     """Disable targeted ads and tracking."""
     try:
@@ -776,7 +753,6 @@ def main():
         uninstall_uwp_apps,
         disable_cortana,
         disable_telemetry,
-        disable_taskbar_icons,
         disable_ads_tracking,
         disable_search_indexing,
         clean_temp_files,
