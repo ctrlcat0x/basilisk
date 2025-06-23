@@ -26,6 +26,9 @@
 
 - 🚀 **Automated Debloating** - Removes Windows bloatware and unnecessary applications
 - ⚡ **System Optimization** - Applies registry tweaks for better performance
+- 🌐 **Network Optimization Tweaks** - Disables Delivery Optimization, tunes TCP/IP, and improves network performance
+- 🛡️ **Telemetry & Tracking Blocker** - Blocks known Microsoft telemetry and ad servers at the hosts file level
+- 💾 **SSD & Hardware-Specific Optimizations** - Detects SSDs, enables TRIM, disables scheduled defrag, and applies hardware-specific tweaks
 - 🔧 **Update Policy Configuration** - Configures Windows Update policies based on your edition
 - 🎨 **Custom Desktop Background** - Sets a custom desktop wallpaper
 - 🖥️ **User-Friendly Interface** - Simple GUI with progress tracking
@@ -176,6 +179,11 @@ basilisk/
 - **Raphi Win11Debloat** - Additional debloating and customization
 - **Privacy.sexy** - Comprehensive privacy and security hardening
 - **Custom Scripts** - Edge removal and Office Online cleanup
+
+### Advanced Optimizations
+- **Network Tweaks**: Disables Windows Delivery Optimization, tunes TCP/IP stack, disables NetBIOS, and optimizes network adapter settings for better speed and lower background usage.
+- **Telemetry & Tracking Blocker**: Updates the Windows hosts file to block a curated list of Microsoft telemetry and ad servers, reducing unwanted data collection.
+- **SSD & Hardware-Specific Optimizations**: Detects SSDs, enables TRIM, disables scheduled defrag, disables Superfetch, and applies other hardware-specific performance tweaks.
 
 ### Registry Modifications
 - Taskbar alignment (left-aligned)

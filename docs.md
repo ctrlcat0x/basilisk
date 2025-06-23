@@ -223,7 +223,7 @@ Provides the main window framework with overlay capabilities.
 
 ---
 
-## The 7-Step Debloating Process
+## The 8-Step Debloating Process
 
 ### Step 1: Download Scripts (`debloat_download_scripts.py`)
 
@@ -368,43 +368,22 @@ HKEY_CURRENT_USER\System\GameConfigStore
 
 ### Step 6: Advanced Optimizations (`debloat_advanced_optimizations.py`)
 
-**Purpose**: Applies comprehensive system debloat and hardening.
+**Purpose**: Applies a wide range of advanced system tweaks for performance, privacy, and hardware longevity.
 
-**Optimizations Applied:**
+**New Features:**
+- **Network Optimization Tweaks**: Disables Windows Delivery Optimization, tunes TCP/IP stack, disables NetBIOS, and optimizes network adapter settings for improved speed and reduced background bandwidth usage.
+- **Telemetry & Tracking Blocker**: Updates the Windows hosts file to block a curated list of Microsoft telemetry and ad servers, minimizing unwanted data collection.
+- **SSD & Hardware-Specific Optimizations**: Detects SSDs, enables TRIM, disables scheduled defrag, disables Superfetch, and applies other hardware-specific performance tweaks for optimal SSD longevity and speed.
 
-#### Power Management
-- **Ultimate Performance Plan**: Enables the highest performance power plan
-- **Power Settings**: Optimizes CPU and GPU power management
-
-#### Security & Privacy
-- **Windows Defender**: **PRESERVED** - Windows Defender is kept enabled for system security
-- **Telemetry**: Disables data collection
-- **Cortana**: **PRESERVED** - Windows Search functionality is maintained
-- **Search Indexing**: **PRESERVED** - Search functionality is maintained
-
-#### System Services
-- **Non-Essential Services**: Disables unnecessary background services
-- **Startup Programs**: Removes bloatware from startup
-- **Background Apps**: Disables resource-intensive background applications
-
-#### UWP App Removal
-- **Pre-installed Apps**: Removes Microsoft Store apps
-- **Bloatware**: Removes manufacturer-installed applications
-- **System Apps**: Removes non-essential system applications
-
-#### Hardware Optimizations
-- **SSD Optimization**: Enables TRIM, disables defrag, optimizes for SSD performance
-- **Memory Optimization**: Advanced memory management and virtual memory settings
-- **Network Optimization**: TCP Fast Open, network adapter optimizations
+**Technical Details:**
+- Uses PowerShell and direct file editing for system-level changes.
+- All changes are logged and can be reviewed in the advanced optimizations log.
+- Hosts file changes are additive and do not overwrite user customizations.
 
 **Windows Effects:**
-- **Performance**: Significantly improved system responsiveness
-- **Privacy**: Enhanced privacy protection
-- **Security**: **MAINTAINED** - Windows Defender protection preserved
-- **Search**: **MAINTAINED** - Windows Search functionality preserved
-- **Resource Usage**: Reduced memory and CPU usage
-- **Startup Time**: Faster system boot times (Fast Startup preserved)
-- **Hardware**: Optimized for SSD, memory, and network performance
+- Improved network performance and lower background bandwidth usage.
+- Enhanced privacy by blocking telemetry and tracking domains at the OS level.
+- Ensures SSDs are properly optimized for Windows 11, increasing performance and lifespan.
 
 ### Step 7: Configure Updates (`debloat_configure_updates.py`)
 

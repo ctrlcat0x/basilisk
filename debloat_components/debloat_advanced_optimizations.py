@@ -729,6 +729,69 @@ def optimize_network():
         return False
 
 
+def block_telemetry_hosts():
+    """Block known Microsoft telemetry and ad servers via the hosts file."""
+    try:
+        logger.info("Blocking telemetry and tracking domains in hosts file...")
+        hosts_path = r"C:\Windows\System32\drivers\etc\hosts"
+        telemetry_domains = [
+            # Microsoft Telemetry/Tracking
+            "vortex.data.microsoft.com",
+            "telemetry.microsoft.com",
+            "telecommand.telemetry.microsoft.com",
+            "oca.telemetry.microsoft.com",
+            "oca.telemetry.microsoft.com.nsatc.net",
+            "sqm.telemetry.microsoft.com",
+            "watson.telemetry.microsoft.com",
+            "watson.ppe.telemetry.microsoft.com",
+            "vortex-win.data.microsoft.com",
+            "settings-win.data.microsoft.com",
+            "vortex-bn2.metron.live.com.nsatc.net",
+            "vortex-cy2.metron.live.com.nsatc.net",
+            "vortex.data.glbdns2.microsoft.com",
+            "vortex-sandbox.data.microsoft.com",
+            "telemetry.appex.bing.net",
+            "telemetry.urs.microsoft.com",
+            "telemetry.appex.bing.net:443",
+            "settings-sandbox.data.microsoft.com",
+            "survey.watson.microsoft.com",
+            "watson.live.com",
+            "watson.microsoft.com",
+            "statsfe2.ws.microsoft.com",
+            "corpext.msitadfs.glbdns2.microsoft.com",
+            "compatexchange.cloudapp.net",
+            "a-0001.a-msedge.net",
+            "a-0002.a-msedge.net",
+            "a-0003.a-msedge.net",
+            "a-0004.a-msedge.net",
+            "a-0005.a-msedge.net",
+            "a-0006.a-msedge.net",
+            "a-0007.a-msedge.net",
+            "a-0008.a-msedge.net",
+            "a-0009.a-msedge.net",
+            "settings.data.microsoft.com",
+            "feedback.windows.com",
+            "feedback.microsoft-hohm.com",
+            "feedback.search.microsoft.com",
+            "feedback.support.microsoft.com",
+            # Add more as needed
+        ]
+        block_lines = [f"0.0.0.0 {domain}\n" for domain in telemetry_domains]
+        # Read current hosts file
+        with open(hosts_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        # Only add if not already present
+        with open(hosts_path, "a", encoding="utf-8") as f:
+            for line in block_lines:
+                if not any(domain in l for l in lines for domain in [line.split()[1]]):
+                    f.write(line)
+        logger.info("Telemetry and tracking domains blocked in hosts file.")
+        return True
+    except Exception as e:
+        logger.error(f"Error updating hosts file: {e}")
+        return False
+
+
 def main():
     """Run all advanced optimizations."""
     logger.info("Starting advanced Windows optimizations...")
@@ -758,7 +821,8 @@ def main():
         optimize_startup_performance,
         optimize_ssd,
         optimize_memory,
-        optimize_network
+        optimize_network,
+        block_telemetry_hosts
     ]
     
     for optimization in optimizations:
