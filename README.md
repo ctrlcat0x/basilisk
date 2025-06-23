@@ -12,7 +12,6 @@
   <a href="#-features">Features</a> •
   <a href="#-system-requirements">Requirements</a> •
   <a href="#-installation--usage">Installation</a> •
-  <a href="#-safety--compatibility">Safety</a> •
   <a href="#-contributing">Contributing</a>
 </p>
 
@@ -21,6 +20,8 @@
 ## ⚠️ Important Notice
 
 > **Basilisk is designed to be used on freshly installed Windows 11 systems.** Using Basilisk on an already in-use system, or any older versions of Windows, is not guaranteed to work and can cause some apps to stop working properly and system corruption!
+
+> **You must disable Real-time Protection, Tamper Protection & add a C:/ drive exclusion in windows security before running basilisk.**
 
 ## ✨ Features
 
@@ -50,7 +51,7 @@
 Run Basilisk directly from GitHub with a single command:
 
 ```powershell
-iex (irm https://raw.githubusercontent.com/ctrlcat0x/basilisk/master/scripts/run.ps1)
+iex (irm https://raw.githubusercontent.com/ctrlcat0x/basilisk/master/run.ps1)
 ```
 
 **Requirements:**
@@ -223,10 +224,11 @@ We welcome contributions from the community! Here's how you can help:
 
 ### Core External Tools & Scripts
 **The project would never have been possible without the extensive research and work done by these developers of windows optimization software which serves as the core of basilisk.**
-- [Raven Development Team](https://ravendevteam.org/)
+- [Talon by Raven Development Team](https://github.com/ravendevteam/talon)
 - [ChrisTitusTech](https://github.com/christitustech) - [CTT WinUtil](https://github.com/christitustech/winutil)
 - [Raphire](https://github.com/Raphire) - [Win11Debloat](https://github.com/Raphire/Win11Debloat)
 - [undergroundwires](https://github.com/undergroundwires) - [privacy.sexy](https://github.com/undergroundwires/privacy.sexy)
+- [Massgrave Activation Script](https://github.com/massgravel/Microsoft-Activation-Scripts)
 
 ## 📄 License
 
