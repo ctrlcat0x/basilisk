@@ -12,7 +12,6 @@
   <a href="#-features">Features</a> •
   <a href="#-system-requirements">Requirements</a> •
   <a href="#-installation--usage">Installation</a> •
-  <a href="#-safety--compatibility">Safety</a> •
   <a href="#-contributing">Contributing</a>
 </p>
 
