@@ -1,13 +1,3 @@
-# Update Policy Changer Pro
-# filename: update_policy_changer_pro.ps1
-#
-# This script makes a few small tweaks to ensure that Windows only receives security updates, leaving out "feature" updates, permanently.
-# This prevents Windows from reinstalling any extra applications or changes that the user doesn't want, ensuring only necessary changes.
-# This update script will work on Pro or above systems. It is recommended to use the regular variant of this script on Windows Home systems,
-# as that script essentially does the same thing, but only for 365 days.
-
-# Massive thanks to Skull Crusher (zombiehunternr1) for this script!
-
 $registryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
 
 # Exclude non-security classifications (including drivers)
@@ -34,7 +24,22 @@ Set-ItemProperty -Path $registryPath -Name "ExcludeUpdateClassifications" -Value
 Set-ItemProperty -Path $registryPath -Name "ExcludeWUDriversInQualityUpdate" -Value 1 -Type DWord -Force  # Block drivers
 Set-ItemProperty -Path $registryPath -Name "AUOptions" -Value 2 -Type DWord -Force  # Notify before install
 
-# Restart Windows Update service
-Restart-Service -Name wuauserv -Force
+# Stop Windows Update service with timeout
+$service = Get-Service -Name wuauserv
+if ($service.Status -ne 'Stopped') {
+    Stop-Service -Name wuauserv -Force
+    $timeout = 10
+    $elapsed = 0
+    while ((Get-Service -Name wuauserv).Status -ne 'Stopped' -and $elapsed -lt $timeout) {
+        Start-Sleep -Seconds 1
+        $elapsed++
+    }
+    if ((Get-Service -Name wuauserv).Status -ne 'Stopped') {
+        Write-Warning "wuauserv did not stop within $timeout seconds. Continuing anyway."
+    }
+}
+
+# Start the service again
+Start-Service -Name wuauserv -ErrorAction SilentlyContinue
 
 Write-Host "Security updates only. Drivers are blocked, including Optional Updates."

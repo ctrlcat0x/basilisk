@@ -35,6 +35,7 @@
 - 🖥️ **User-Friendly Interface** - Simple GUI with progress tracking
 - 📝 **Comprehensive Logging** - Detailed logging for troubleshooting
 - 🛡️ **Safety First** - Creates system restore points before modifications
+- **Automated App Installation** - Installs essential apps (Windows Terminal, Brave, 7-Zip, VLC, .NET, DirectX, etc.) directly using winget with admin rights
 
 ## 📋 System Requirements
 
@@ -103,33 +104,17 @@ python basilisk.py --skip-configure-updates-step
 
 ## 📦 Automatically Installed Applications
 
-Basilisk can automatically install several useful applications during the debloating process. These installations are handled by the external tools (ChrisTitusTech WinUtil) that Basilisk integrates with.
-
-### 🛠️ Core Development & System Tools
-- **Microsoft Windows Terminal** - Modern terminal emulator with tabs and customization
-- **Git** - Distributed version control system for software development
-- **7-Zip** - High-compression file archiver and extractor
-- **Microsoft Visual C++ Redistributables (2015+)** - Essential runtime libraries
-  - x86 version for 32-bit applications
-  - x64 version for 64-bit applications
-
-### 🌐 Web Browsers
-- **Brave Browser** - Privacy-focused web browser with built-in ad blocking
-- **Zen Browser** - Alternative web browser with enhanced privacy features
-
-### 🔧 Development Runtime
-- **Microsoft .NET Desktop Runtime 8** - .NET framework for desktop applications
-- **Microsoft .NET Desktop Runtime 9** - Latest .NET framework version
-- **Microsoft Edge WebView2 Runtime** - Web component framework for applications
-
-### 📋 Installation Method
-Applications are installed using **WinGet** (Windows Package Manager) as the primary method, with Chocolatey as a fallback option.
-
-### ⚠️ Important Notes
-- **External Tool Dependency**: Installation is handled by ChrisTitusTech WinUtil, not directly by Basilisk
-- **User Choice**: Installation may be configurable or optional depending on WinUtil settings
-- **System Requirements**: Some applications require specific Windows versions or prerequisites
-- **Installation Success**: Individual package installation success depends on system compatibility and network connectivity
+Basilisk now installs the following apps directly using winget (with admin rights):
+- Microsoft.WindowsTerminal
+- Brave.Brave
+- 7zip.7zip
+- VideoLAN.VLC
+- Microsoft.DotNet.DesktopRuntime.8
+- Microsoft.DotNet.DesktopRuntime.9
+- Microsoft.VCRedist.2015+.x86
+- Microsoft.VCRedist.2015+.x64
+- Microsoft.EdgeWebView2Runtime
+- Microsoft.DirectX
 
 ## 🏗️ Architecture Overview
 

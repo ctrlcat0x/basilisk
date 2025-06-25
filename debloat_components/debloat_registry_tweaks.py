@@ -89,9 +89,6 @@ def main():
         
         # Multimedia System Profile for Gaming
         (winreg.HKEY_LOCAL_MACHINE,
-         r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile",
-         "SystemResponsiveness", winreg.REG_DWORD, 0),
-        (winreg.HKEY_LOCAL_MACHINE,
          r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games",
          "GPU Priority", winreg.REG_DWORD, 8),
         (winreg.HKEY_LOCAL_MACHINE,

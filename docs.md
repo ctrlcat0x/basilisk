@@ -292,7 +292,29 @@ Provides the main window framework with overlay capabilities.
 - Handles tool-specific requirements
 - Logs all modifications
 
-### Step 4: Execute Privacy.sexy (`debloat_execute_privacy_sexy.py`)
+### Step 4: Direct App Installation (new)
+
+**Purpose**: Installs essential apps directly using winget with admin rights.
+
+**Apps Installed by Default:**
+- Microsoft.WindowsTerminal
+- Brave.Brave
+- 7zip.7zip
+- VideoLAN.VLC
+- Microsoft.DotNet.DesktopRuntime.8
+- Microsoft.DotNet.DesktopRuntime.9
+- Microsoft.VCRedist.2015+.x86
+- Microsoft.VCRedist.2015+.x64
+- Microsoft.EdgeWebView2Runtime
+- Microsoft.DirectX
+
+(You can customize this list in the code.)
+
+**Technical Details:**
+- Uses PowerShell with elevation to ensure all installs succeed
+- Logs all install attempts and errors
+
+### Step 5: Execute Privacy.sexy (`debloat_execute_privacy_sexy.py`)
 
 **Purpose**: Runs comprehensive privacy and security hardening using the privacy.sexy script.
 
@@ -320,7 +342,7 @@ Provides the main window framework with overlay capabilities.
 - **Tested**: Community-tested and verified scripts
 - **Extensible**: Custom templating language for additional scripts
 
-### Step 5: Registry Tweaks (`debloat_registry_tweaks.py`)
+### Step 6: Registry Tweaks (`debloat_registry_tweaks.py`)
 
 **Purpose**: Applies visual and performance registry modifications.
 
@@ -366,25 +388,6 @@ HKEY_CURRENT_USER\System\GameConfigStore
 - **Performance**: Faster menu animations, reduced UI delays
 - **Gaming**: Disabled Game DVR for better performance
 
-### Step 6: Advanced Optimizations (`debloat_advanced_optimizations.py`)
-
-**Purpose**: Applies a wide range of advanced system tweaks for performance, privacy, and hardware longevity.
-
-**New Features:**
-- **Network Optimization Tweaks**: Disables Windows Delivery Optimization, tunes TCP/IP stack, disables NetBIOS, and optimizes network adapter settings for improved speed and reduced background bandwidth usage.
-- **Telemetry & Tracking Blocker**: Updates the Windows hosts file to block a curated list of Microsoft telemetry and ad servers, minimizing unwanted data collection.
-- **SSD & Hardware-Specific Optimizations**: Detects SSDs, enables TRIM, disables scheduled defrag, disables Superfetch, and applies other hardware-specific performance tweaks for optimal SSD longevity and speed.
-
-**Technical Details:**
-- Uses PowerShell and direct file editing for system-level changes.
-- All changes are logged and can be reviewed in the advanced optimizations log.
-- Hosts file changes are additive and do not overwrite user customizations.
-
-**Windows Effects:**
-- Improved network performance and lower background bandwidth usage.
-- Enhanced privacy by blocking telemetry and tracking domains at the OS level.
-- Ensures SSDs are properly optimized for Windows 11, increasing performance and lifespan.
-
 ### Step 7: Configure Updates (`debloat_configure_updates.py`)
 
 **Purpose**: Configures Windows Update policies based on system edition.
@@ -417,7 +420,7 @@ HKEY_CURRENT_USER\System\GameConfigStore
 **Purpose**: Sets custom desktop wallpaper and performs cleanup.
 
 **Actions Performed:**
-- **Wallpaper**: Sets `background.png` as desktop wallpaper
+- **Wallpaper**: Sets `background.jpeg` as desktop wallpaper
 - **Cleanup**: Removes temporary files and system cache
 - **Finalization**: Completes the debloating process
 

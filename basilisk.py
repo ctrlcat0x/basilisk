@@ -198,19 +198,24 @@ def main(argv=None):
                 continue
             _update_status(status_label, message)
             try:
+                # Re-download scripts before any script-execution step
+                if slug in [
+                    "execute-privacy-sexy",
+                    "configure-updates",
+                    "advanced-optimizations",
+                ]:
+                    try:
+                        debloat_download_scripts.main()
+                        logger.info("Re-downloaded scripts before script execution step.")
+                    except Exception as e:
+                        logger.error(f"Error re-downloading scripts: {e}")
+                        logger.warning("Continuing to next step despite error in script re-download.")
                 func()
                 logger.info(f"Completed {slug} step successfully")
             except Exception as e:
                 logger.error(f"Error in {slug} step: {e}")
                 logger.warning(f"Continuing to next step despite error in {slug}")
                 continue
-        
-        # After background is applied, clean temp files
-        _update_status(status_label, "Cleaning up temporary files...")
-        try:
-            debloat_advanced_optimizations.clean_temp_files()
-        except Exception as e:
-            logger.error(f"Error cleaning temp files: {e}")
         
         _update_status(status_label, "Restarting system…")
         subprocess.call(["shutdown", "/r", "/t", "0"])

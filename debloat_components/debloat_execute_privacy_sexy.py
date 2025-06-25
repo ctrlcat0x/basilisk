@@ -7,6 +7,7 @@ import os
 import subprocess
 from utilities.util_logger import logger
 from utilities.util_powershell_handler import run_powershell_command
+import tempfile
 
 
 def main():
@@ -15,8 +16,7 @@ def main():
         logger.info("Starting privacy.sexy script execution...")
         
         # Get the script path
-        script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        script_path = os.path.join(script_dir, "scripts", "privacy_sexy.ps1")
+        script_path = os.path.join(tempfile.gettempdir(), "basilisk", "privacy_sexy.ps1")
         
         if not os.path.exists(script_path):
             logger.error(f"privacy.sexy script not found at: {script_path}")

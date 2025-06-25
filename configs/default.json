@@ -35,60 +35,6 @@
         "WPFTweaksDeleteTempFiles",
         "WPFTweaksDVR",
         "WPFTweaksEndTaskOnTaskbar"
-    ],
-    "WPFInstall": [
-        "WPFInstallterminal",
-        "WPFInstallbrave",
-        "WPFInstallZenBrowser",
-        "WPFInstalldotnet8",
-        "WPFInstall7zip",
-        "WPFInstallgit",
-        "WPFInstallvc2015_32",
-        "WPFInstallvc2015_64",
-        "WPFInstalldotnet9",
-        "WPFInstallwebview2"
-    ],
-    "Install": [
-        {
-            "winget": "Microsoft.WindowsTerminal",
-            "choco": "microsoft-windows-terminal"
-        },
-        {
-            "winget": "Brave.Brave",
-            "choco": "brave"
-        },
-        {
-            "winget": "Zen-Team.Zen-Browser",
-            "choco": "na"
-        },
-        {
-            "winget": "Microsoft.DotNet.DesktopRuntime.8",
-            "choco": "dotnet-8.0-runtime"
-        },
-        {
-            "winget": "7zip.7zip",
-            "choco": "7zip"
-        },
-        {
-            "winget": "Git.Git",
-            "choco": "git"
-        },
-        {
-            "winget": "Microsoft.VCRedist.2015+.x86",
-            "choco": "na"
-        },
-        {
-            "winget": "Microsoft.VCRedist.2015+.x64",
-            "choco": "na"
-        },
-        {
-            "winget": "Microsoft.DotNet.DesktopRuntime.9",
-            "choco": "dotnet-9.0-runtime"
-        },
-        {
-            "winget": "Microsoft.EdgeWebView2Runtime",
-            "choco": "microsoft-edge-webview2"
-        }
     ]
 }
   

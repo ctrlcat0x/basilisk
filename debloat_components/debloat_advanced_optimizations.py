@@ -438,9 +438,8 @@ def optimize_memory_settings():
         commands = [
             # Disable memory compression (can improve performance on some systems)
             'Disable-MMAgent -mc',
-            # Set virtual memory (pagefile) to be managed by the system.
-            # This is the safest setting and avoids issues with fixed-size pagefiles.
-            'wmic computersystem where name="%computername%" set AutomaticManagedPagefile=True',
+            # Set virtual memory (pagefile) to be managed by the system (modern method).
+            'Set-CimInstance -ClassName Win32_ComputerSystem -Property @{AutomaticManagedPagefile=$true}',
             # Optimize memory management
             'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "ClearPageFileAtShutdown" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
             'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "DisablePagingExecutive" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue'
@@ -467,7 +466,6 @@ def optimize_gaming_settings():
               # Disable unnecessary startup services
             'Set-Service -Name "SysMain" -StartupType Disabled -ErrorAction SilentlyContinue',
             'Set-Service -Name "WSearch" -StartupType Disabled -ErrorAction SilentlyContinue',
-            'Set-Service -Name "TabletInputService" -StartupType Disabled -ErrorAction SilentlyContinue',
             'Set-Service -Name "WbioSrvc" -StartupType Disabled -ErrorAction SilentlyContinue',
             # Disable Game DVR and Game Bar via registry
             'Set-ItemProperty -Path "HKCU:\\System\\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
@@ -539,6 +537,22 @@ def optimize_ssd():
         return False
 
 
+def enable_drag_full_windows():
+    """Enable live drag preview (DragFullWindows) for all users."""
+    try:
+        logger.info("Enabling live drag preview (DragFullWindows)...")
+        command = 'Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type String -Value "1" -Force -ErrorAction SilentlyContinue'
+        result = run_powershell_command(command, allow_continue_on_fail=True)
+        if result == 0:
+            logger.info("Live drag preview enabled (DragFullWindows=1)")
+        else:
+            logger.warning("Failed to enable live drag preview (DragFullWindows)")
+        return True
+    except Exception as e:
+        logger.error(f"Error enabling DragFullWindows: {e}")
+        return True
+
+
 def main():
     """Run all advanced optimizations."""
     logger.info("Starting advanced Windows optimizations...")
@@ -551,18 +565,19 @@ def main():
         disable_telemetry,
         disable_ads_tracking,
         disable_search_indexing,
-        clean_temp_files,
-        disable_delivery_optimization,
-        disable_suggested_content,
+        # clean_temp_files, [broken]
+        # disable_delivery_optimization, [broken]
+        # disable_non_essential_services, [broken]
+        # optimize_memory_settings, [broken]
         clear_dns_cache,
         disable_automatic_maintenance,
-        disable_non_essential_services,
         optimize_network_settings,
         optimize_disk_performance,
-        optimize_memory_settings,
         optimize_gaming_settings,
         optimize_privacy_settings,
-        optimize_ssd
+        optimize_ssd,
+        enable_drag_full_windows,
+        disable_suggested_content
     ]
     
     for optimization in optimizations:

@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QPixmap
 from utilities.util_load_font import load_font
 from utilities.util_error_popup import show_error_popup
+from utilities.util_load_resource import get_resource_path
 
 
 
@@ -33,7 +34,7 @@ class UIImage(QLabel):
         else:
             comp_dir = os.path.dirname(os.path.abspath(__file__))
             base = os.path.dirname(comp_dir)
-        img_path = os.path.join(base, "media", filename)
+        img_path = get_resource_path(os.path.join("media", filename))
         pix = QPixmap(img_path)
         if pix.isNull():
             show_error_popup(f"Image not found:\n{img_path}", allow_continue=False)
