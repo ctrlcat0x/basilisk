@@ -342,51 +342,32 @@ Provides the main window framework with overlay capabilities.
 - **Tested**: Community-tested and verified scripts
 - **Extensible**: Custom templating language for additional scripts
 
-### Step 6: Registry Tweaks (`debloat_registry_tweaks.py`)
+### Step 6: Advanced Optimizations (`debloat_advanced_optimizations.py`)
 
-**Purpose**: Applies visual and performance registry modifications.
+**Purpose**: Applies advanced system tweaks for performance, privacy, and user experience.
+
+**New Tweaks Added:**
+- **Start Menu Tweaks**: Disables "Show recently added apps" (`Start_TrackProgs = 0`) and "Show recommended files" (`Start_TrackDocs = 0`) in Start Menu for privacy and a cleaner look.
+- **Accent Color Tweaks**: Enables accent color on Start, taskbar, title bars, and window borders (`ColorPrevalence = 1` in two locations), and sets the accent color to the darkest possible value (`AccentColor = 0xFF000000`).
 
 **Registry Modifications:**
-
-#### Visual Improvements
 ```registry
-# Taskbar alignment (left-aligned)
+# Start Menu Tweaks
 HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
-"TaskbarAl" = 0
+"Start_TrackProgs" = 0
+"Start_TrackDocs" = 0
 
-# Dark theme enforcement
+# Accent Color Tweaks
 HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize
-"AppsUseLightTheme" = 0
-"SystemUsesLightTheme" = 0
-
-# Transparency effects
-HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize
-"EnableTransparency" = 1
-
-# File extension visibility
-HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
-"HideFileExt" = 0
-```
-
-#### Performance Optimizations
-```registry
-# Menu animation speed
-HKEY_CURRENT_USER\Control Panel\Desktop
-"MenuShowDelay" = "0"
-
-# UI hover time
-HKEY_CURRENT_USER\Control Panel\Desktop
-"UserPreferencesMask" = [optimized value]
-
-# Game DVR disable
-HKEY_CURRENT_USER\System\GameConfigStore
-"GameDVR_Enabled" = 0
+"ColorPrevalence" = 1
+HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM
+"ColorPrevalence" = 1
+"AccentColor" = 0xFF000000
 ```
 
 **Windows Effects:**
-- **Visual**: Left-aligned taskbar, dark theme, visible file extensions, transparency effects
-- **Performance**: Faster menu animations, reduced UI delays
-- **Gaming**: Disabled Game DVR for better performance
+- **Start Menu**: No recently added apps or recommended files shown
+- **Accent Color**: Accent color enabled on Start, taskbar, title bars, and window borders, with the darkest possible color applied
 
 ### Step 7: Configure Updates (`debloat_configure_updates.py`)
 
@@ -540,6 +521,8 @@ Applications are installed using **WinGet** (Windows Package Manager) as the pri
 - **Start Menu**: Cleaned and optimized
 - **Windows Search**: **PRESERVED** - Search functionality maintained
 - **Fast Startup**: **PRESERVED** - Boot performance maintained
+- **Start Menu**: No recently added apps or recommended files
+- **Accent Color**: Consistent dark accent color across UI elements
 
 ---
 

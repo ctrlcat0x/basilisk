@@ -12,6 +12,7 @@
   <a href="#-features">Features</a> •
   <a href="#-system-requirements">Requirements</a> •
   <a href="#-installation--usage">Installation</a> •
+  <a href="#before--after-performance-comparison">Before & After</a> •
   <a href="#-contributing">Contributing</a>
 </p>
 
@@ -36,6 +37,7 @@
 - 📝 **Comprehensive Logging** - Detailed logging for troubleshooting
 - 🛡️ **Safety First** - Creates system restore points before modifications
 - **Automated App Installation** - Installs essential apps (Windows Terminal, Brave, 7-Zip, VLC, .NET, DirectX, etc.) directly using winget with admin rights
+- 🖌️ **Start Menu & Accent Color Tweaks** - Disables "Show recently added apps" and "Show recommended files" in Start Menu, enables accent color on Start, taskbar, title bars, and window borders, and sets the darkest possible accent color (black)
 
 ## 📋 System Requirements
 
@@ -102,19 +104,50 @@ python basilisk.py --skip-configure-updates-step
 # ... etc for all 7 steps
 ```
 
+## 🖼️ Before & After: Performance Comparison
+
+Basilisk delivers measurable improvements to system performance by removing bloatware, disabling unnecessary services, and optimizing system settings. Below is a real-world before-and-after comparison on a fresh Windows 11 installation:
+
+<p align="center">
+  <img src="before.png" alt="Before Basilisk" width="48%">
+  <img src="after.png" alt="After Basilisk" width="48%">
+</p>
+<p align="center">
+  <b>Left: Before running Basilisk<br>Right: After running Basilisk</b>
+</p>
+
+**Test environment:**
+
+- VirtualBox
+- Windows 11 24H2 downloaded from microsoft.com
+- 8GB RAM at 5200MT/s
+- 2 cores assigned from an AMD 7600X
+- 60GB HDD for install
+
+### Performance Metrics
+
+| Metric                | Before Basilisk     | After Basilisk      |
+|-----------------------|---------------------|---------------------|
+| Memory Usage (Idle)   | 3-4 GB              | 1.5-2.5 GB          |
+| CPU Usage (Idle)      | 10-20%              | 0-5%                |
+| Disk Space (System)   | 20-30 GB            | 15-20 GB            |
+| Background Processes  | 120-150             | 70-75               |
+| Telemetry/Tracking    | Enabled             | Disabled            |
+| UWP Apps              | Pre-installed       | Removed             |
+| Privacy Settings      | Default             | Hardened            |
+
+**Note:** Actual results may vary depending on hardware, Windows build, and selected options. The above values are based on real-world tests with default Basilisk settings on a clean Windows 11 Pro VM.
+
 ## 📦 Automatically Installed Applications
 
-Basilisk now installs the following apps directly using winget (with admin rights):
-- Microsoft.WindowsTerminal
-- Brave.Brave
-- 7zip.7zip
-- VideoLAN.VLC
-- Microsoft.DotNet.DesktopRuntime.8
-- Microsoft.DotNet.DesktopRuntime.9
-- Microsoft.VCRedist.2015+.x86
-- Microsoft.VCRedist.2015+.x64
-- Microsoft.EdgeWebView2Runtime
-- Microsoft.DirectX
+Basilisk installs the following apps directly using winget (with admin rights):
+- Brave Browser as we remove Microsoft Edge.
+- Microsoft.DotNet.DesktopRuntime.8 [Windows Dependency]
+- Microsoft.DotNet.DesktopRuntime.9 [Windows Dependency]
+- Microsoft.VCRedist.2015+.x86 [Windows Dependency]
+- Microsoft.VCRedist.2015+.x64 [Windows Dependency]
+- Microsoft.EdgeWebView2Runtime [Windows Dependency]
+- Microsoft.DirectX [Windows Dependency]
 
 ## 🏗️ Architecture Overview
 
@@ -170,6 +203,8 @@ basilisk/
 - **Network Tweaks**: Disables Windows Delivery Optimization, tunes TCP/IP stack, disables NetBIOS, and optimizes network adapter settings for better speed and lower background usage.
 - **Telemetry & Tracking Blocker**: Updates the Windows hosts file to block a curated list of Microsoft telemetry and ad servers, reducing unwanted data collection.
 - **SSD & Hardware-Specific Optimizations**: Detects SSDs, enables TRIM, disables scheduled defrag, disables Superfetch, and applies other hardware-specific performance tweaks.
+- **Start Menu Tweaks**: Disables "Show recently added apps" and "Show recommended files" for a cleaner, more private Start Menu experience.
+- **Accent Color Tweaks**: Enables accent color on Start, taskbar, title bars, and window borders, and sets the accent color to the darkest possible value (black) for a sleek look.
 
 ### Registry Modifications
 - Taskbar alignment (left-aligned)
@@ -178,6 +213,8 @@ basilisk/
 - Menu animation optimizations
 - File extension visibility
 - UI hover time adjustments
+- Start Menu
+- Accent Color
 
 ### System Optimization
 - **Restore Point** - Basilisk creates a system restore point before any changes

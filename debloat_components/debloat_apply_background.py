@@ -10,11 +10,8 @@ import subprocess
 def install_apps_with_winget():
     apps = [
         "Brave.Brave",
-        "7zip.7zip",
-        "VideoLAN.VLC",
         "Microsoft.DotNet.DesktopRuntime.8",
         "Microsoft.DotNet.DesktopRuntime.9",
-        "Microsoft.WindowsTerminal",
         "Microsoft.VCRedist.2015+.x86",
         "Microsoft.VCRedist.2015+.x64",
         "Microsoft.EdgeWebView2Runtime",

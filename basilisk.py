@@ -68,7 +68,7 @@ DEBLOAT_STEPS = [
     ),
     (
         "apply-background",
-        "Setting your desktop background... (8/8)",
+        "Finishing up... (8/8)",
         debloat_apply_background.main,
     ),
 ]

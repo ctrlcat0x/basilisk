@@ -251,48 +251,18 @@ def disable_search_indexing():
         return False
 
 
-def clean_temp_files():
-    """Clean temporary files and system cache."""
-    try:
-        logger.info("Cleaning temporary files... (Note: Some files may be in use and cannot be deleted, this is normal)")
-        
-        commands = [
-            # The error in your log comes from here. Files can be locked by the system.
-            # This is not a critical failure. The command will skip locked files.
-            'Get-ChildItem -Path $env:TEMP -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue',
-            'Get-ChildItem -Path "$env:SystemRoot\\Temp" -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue',
-            'Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase'
-        ]
-        
-        for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.warning(f"A cleanup command reported a non-critical issue (e.g. file in use): {command}")
-        
-        logger.info("Temporary files cleaned.")
-        return True
-    except Exception as e:
-        logger.error(f"Error cleaning temp files: {e}")
-        return False
-
-
 def disable_delivery_optimization():
     """Disable Windows Delivery Optimization."""
     try:
         logger.info("Disabling delivery optimization...")
-        
-        commands = [
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DeliveryOptimization\\Config" -Name "DODownloadMode" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization" -Name "DOMaxBackgroundUploadBandwidth" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization" -Name "DOMaxForegroundUploadBandwidth" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue'
-        ]
-        
-        for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.warning(f"Command failed: {command}")
-        
-        logger.info("Delivery optimization disabled")
+        command = '''
+        New-Item -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DeliveryOptimization\\Config" -Force -ErrorAction SilentlyContinue | Out-Null;
+        Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DeliveryOptimization\\Config" -Name "DODownloadMode" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue;
+        New-Item -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization" -Force -ErrorAction SilentlyContinue | Out-Null;
+        Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue;
+        '''
+        run_powershell_command(command, allow_continue_on_fail=True)
+        logger.info("Delivery optimization disabled.")
         return True
     except Exception as e:
         logger.error(f"Error disabling delivery optimization: {e}")
@@ -353,31 +323,6 @@ def disable_automatic_maintenance():
         return False
 
 
-def disable_non_essential_services():
-    """Disable non-essential Windows services."""
-    try:
-        logger.info("Disabling non-essential services...")
-        
-        services = [
-            "Fax", "RemoteRegistry", "Print Spooler", "TabletInputService", "DiagTrack",
-            "dmwappushservice", "SysMain", "DoSvc", "lfsvc", "XblGameSave",
-            "XboxGipSvc", "XboxNetApiSvc", "GamingServices", "GamingServicesNet",
-            "PimIndexMaintenanceSvc", "UserDataSvc", "UnistoreSvc"
-        ]
-        
-        for service in services:
-            command = f'Set-Service -Name "{service}" -StartupType Disabled -ErrorAction SilentlyContinue'
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.debug(f"Failed to disable service: {service} (it may not exist on this system)")
-        
-        logger.info("Non-essential services disabled")
-        return True
-    except Exception as e:
-        logger.error(f"Error disabling non-essential services: {e}")
-        return False
-
-
 def optimize_network_settings():
     """Optimize network settings for better performance."""
     try:
@@ -434,23 +379,14 @@ def optimize_memory_settings():
     """Optimize memory and virtual memory settings."""
     try:
         logger.info("Optimizing memory settings...")
-        
-        commands = [
-            # Disable memory compression (can improve performance on some systems)
-            'Disable-MMAgent -mc',
-            # Set virtual memory (pagefile) to be managed by the system (modern method).
-            'Set-CimInstance -ClassName Win32_ComputerSystem -Property @{AutomaticManagedPagefile=$true}',
-            # Optimize memory management
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "ClearPageFileAtShutdown" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
-            'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "DisablePagingExecutive" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue'
-        ]
-        
-        for command in commands:
-            result = run_powershell_command(command, allow_continue_on_fail=True)
-            if result != 0:
-                logger.warning(f"Memory optimization command failed: {command}")
-        
-        logger.info("Memory settings optimized")
+        command = '''
+        Disable-MMAgent -mc -ErrorAction SilentlyContinue;
+        Set-CimInstance -Query "SELECT * FROM Win32_ComputerSystem" -Property @{AutomaticManagedPagefile=$true} -ErrorAction SilentlyContinue;
+        Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "ClearPageFileAtShutdown" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue;
+        Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management" -Name "DisablePagingExecutive" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue;
+        '''
+        run_powershell_command(command, allow_continue_on_fail=True)
+        logger.info("Memory settings optimized.")
         return True
     except Exception as e:
         logger.error(f"Error optimizing memory settings: {e}")
@@ -537,6 +473,30 @@ def optimize_ssd():
         return False
 
 
+def optimize_start_menu_settings():
+    """Optimize Start Menu settings for better privacy and cleaner interface."""
+    try:
+        logger.info("Optimizing Start Menu settings...")
+        
+        commands = [
+            # Disable "Show recently added apps" in Start Menu
+            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue',
+            # Disable "Show recommended files in Start, recent files in File Explorer, and items in Jump Lists"
+            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" -Name "Start_TrackDocs" -Type DWord -Value 0 -Force -ErrorAction SilentlyContinue'
+        ]
+        
+        for command in commands:
+            result = run_powershell_command(command, allow_continue_on_fail=True)
+            if result != 0:
+                logger.warning(f"Start Menu optimization command failed: {command}")
+        
+        logger.info("Start Menu settings optimized")
+        return True
+    except Exception as e:
+        logger.error(f"Error optimizing Start Menu settings: {e}")
+        return False
+
+
 def enable_drag_full_windows():
     """Enable live drag preview (DragFullWindows) for all users."""
     try:
@@ -553,22 +513,57 @@ def enable_drag_full_windows():
         return True
 
 
+def enable_accent_color_features():
+    """Enable accent color on Start, taskbar, title bars, and window borders."""
+    try:
+        logger.info("Enabling accent color features (Start, taskbar, title bars, window borders)...")
+        commands = [
+            # Enable accent color on Start and taskbar
+            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize" -Name "ColorPrevalence" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue',
+            # Enable accent color on title bars and window borders
+            'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\DWM" -Name "ColorPrevalence" -Type DWord -Value 1 -Force -ErrorAction SilentlyContinue'
+        ]
+        for command in commands:
+            result = run_powershell_command(command, allow_continue_on_fail=True)
+            if result != 0:
+                logger.warning(f"Accent color command failed: {command}")
+        logger.info("Accent color features enabled.")
+        return True
+    except Exception as e:
+        logger.error(f"Error enabling accent color features: {e}")
+        return False
+
+
+def set_darkest_accent_color():
+    """Set the Windows accent color to the darkest possible color (black)."""
+    try:
+        logger.info("Setting accent color to the darkest possible value (black)...")
+        command = 'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\DWM" -Name "AccentColor" -Type DWord -Value 0xFF000000 -Force -ErrorAction SilentlyContinue'
+        result = run_powershell_command(command, allow_continue_on_fail=True)
+        if result == 0:
+            logger.info("Accent color set to black.")
+        else:
+            logger.warning("Failed to set accent color to black.")
+        return True
+    except Exception as e:
+        logger.error(f"Error setting accent color: {e}")
+        return False
+
+
 def main():
     """Run all advanced optimizations."""
     logger.info("Starting advanced Windows optimizations...")
     
     # Run all optimizations
     optimizations = [
+        disable_delivery_optimization,
+        optimize_memory_settings,
         set_ultimate_power_plan,
         uninstall_uwp_apps,
         disable_cortana,
         disable_telemetry,
         disable_ads_tracking,
         disable_search_indexing,
-        # clean_temp_files, [broken]
-        # disable_delivery_optimization, [broken]
-        # disable_non_essential_services, [broken]
-        # optimize_memory_settings, [broken]
         clear_dns_cache,
         disable_automatic_maintenance,
         optimize_network_settings,
@@ -576,6 +571,9 @@ def main():
         optimize_gaming_settings,
         optimize_privacy_settings,
         optimize_ssd,
+        optimize_start_menu_settings,
+        enable_accent_color_features,
+        set_darkest_accent_color,
         enable_drag_full_windows,
         disable_suggested_content
     ]

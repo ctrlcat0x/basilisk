@@ -481,15 +481,6 @@ Remove-FileSystemItem -Path "%PROGRAMDATA%\Microsoft\Diagnosis\ETLLogs\AutoLogge
 Remove-FileSystemItem -Path "%PROGRAMDATA%\Microsoft\Diagnosis\ETLLogs\ShutdownLogger\AutoLogger-Diagtrack-Listener.etl" -TakeOwnership
 Set-ServiceState -Name 'DiagTrack' -State 'Started'
 
-Show-SectionHeader "Clear event logs in Event Viewer application"
-wevtutil.exe sl Microsoft-Windows-LiveId/Operational /ca:O:BAG:SYD:(A;;0x1;;;SY)(A;;0x5;;;BA)(A;;0x1;;;LA) *>&1 | Out-Null
-$eventLogs = wevtutil.exe el
-foreach ($log in $eventLogs) {
-    Write-Verbose "Clearing event log: $log"
-    wevtutil.exe cl $log 2>$null # Redirect errors as some logs can't be cleared
-}
-Write-Host "Finished clearing event logs." -ForegroundColor Green
-
 Show-SectionHeader "Clear Defender scan (protection) history"
 Clear-DirectoryContents -Path "%ProgramData%\Microsoft\Windows Defender\Scans\History" -TakeOwnership
 
