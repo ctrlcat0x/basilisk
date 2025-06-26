@@ -36,8 +36,8 @@
 - 🖥️ **User-Friendly Interface** - Simple GUI with progress tracking
 - 📝 **Comprehensive Logging** - Detailed logging for troubleshooting
 - 🛡️ **Safety First** - Creates system restore points before modifications
-- **Automated App Installation** - Installs essential apps (Windows Terminal, Brave, 7-Zip, VLC, .NET, DirectX, etc.) directly using winget with admin rights
-- 🖌️ **Start Menu & Accent Color Tweaks** - Disables "Show recently added apps" and "Show recommended files" in Start Menu, enables accent color on Start, taskbar, title bars, and window borders, and sets the darkest possible accent color (black)
+- 🪟 **Automated App Installation** - Installs essential apps (Brave, .NET, DirectX, etc.) directly using winget with admin rights
+- 🖌️ **Start Menu & Accent Color Tweaks** - Disables "Show recently added apps" and "Show recommended files" in Start Menu, enables accent color
 
 ## 📋 System Requirements
 
@@ -57,12 +57,7 @@ Run Basilisk directly from GitHub with a single command:
 iex (irm https://raw.githubusercontent.com/ctrlcat0x/basilisk/master/run.ps1)
 ```
 
-**Requirements:**
-- PowerShell (run as Administrator)
-- Internet connection
-- Windows 11
-
-This command will automatically:
+**This command will automatically:**
 - Configure Windows Defender settings
 - Download the latest Basilisk executable
 - Launch Basilisk with administrator privileges
@@ -72,7 +67,6 @@ This command will automatically:
 1. Download the latest version from [GitHub Releases](https://github.com/ctrlcat0x/basilisk/releases)
 2. Temporarily whitelist your C: drive in Windows Defender
 3. **Run as Administrator**
-4. Follow the on-screen prompts (if any)
 
 ### Building from Source
 
