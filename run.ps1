@@ -118,64 +118,27 @@ try {
     Write-Host "  Output path: $outputPath" -ForegroundColor Gray
     Write-Host ""
     
-    # Download the file with progress
-    $webClient = New-Object System.Net.WebClient
-    $webClient.Headers.Add("User-Agent", "Basilisk-Downloader/1.0")
-    
-    # Add progress event handler
-    $webClient.DownloadProgressChanged = {
-        param($sender, $e)
-        $percentComplete = $e.ProgressPercentage
-        $bytesReceived = $e.BytesReceived
-        $totalBytes = $e.TotalBytesToReceive
-        $mbReceived = [math]::Round($bytesReceived / 1MB, 2)
-        $mbTotal = [math]::Round($totalBytes / 1MB, 2)
-        
-        Write-Progress -Activity "Downloading Basilisk" -Status "Downloaded $mbReceived MB of $mbTotal MB" -PercentComplete $percentComplete
-        Write-Host "  Download progress: $percentComplete% ($mbReceived MB / $mbTotal MB)" -ForegroundColor Cyan
-    }
-    
-    $webClient.DownloadFileCompleted = {
-        param($sender, $e)
-        if ($e.Cancelled) {
-            Write-Host "  ❌ Download was cancelled" -ForegroundColor Red
-        } elseif ($e.Error) {
-            Write-Host "  ❌ Download failed: $($e.Error.Message)" -ForegroundColor Red
-        } else {
-            Write-Host "  ✅ Download completed successfully!" -ForegroundColor Green
-        }
-    }
-    
+
     Write-Host "  Starting download..." -ForegroundColor Gray
-    $webClient.DownloadFileAsync($downloadUrl, $outputPath)
-    
-    # Wait for download to complete
-    while ($webClient.IsBusy) {
-        Start-Sleep -Milliseconds 100
-    }
-    
+    Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -UseBasicParsing
+
     # Verify download
     if (Test-Path $outputPath) {
         $downloadedSize = (Get-Item $outputPath).Length
         Write-Host "  ✅ File saved to: $outputPath" -ForegroundColor Green
         Write-Host "  Downloaded size: $([math]::Round($downloadedSize / 1MB, 2)) MB" -ForegroundColor Gray
-        
+
         # Show file properties
         $fileInfo = Get-Item $outputPath
         Write-Host "  File created: $($fileInfo.CreationTime)" -ForegroundColor Gray
-        
     } else {
         Write-Host "  ❌ Download failed! File not found at expected location." -ForegroundColor Red
         exit 1
     }
-    
+
 } catch {
     Write-Host "  ❌ Error during download: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
-} finally {
-    if ($webClient) {
-        $webClient.Dispose()
-    }
 }
 
 # Step 4: Launch Basilisk
@@ -222,5 +185,12 @@ if (-not $RunAfterDownload) {
 Write-Host ""
 Write-Host "Note: Windows Defender real-time protection has been temporarily disabled." -ForegroundColor Yellow
 Write-Host "Remember to re-enable it after using Basilisk if needed." -ForegroundColor Yellow
+Write-Host ""
 
-pause 
+Write-Host "Closing in 10 seconds..."
+Start-Sleep -Seconds 10
+
+try {
+    $host.UI.RawUI.FlushInputBuffer() | Out-Null
+} catch {}
+exit 

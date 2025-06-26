@@ -12,7 +12,6 @@
         "WPFTweaksDeBloat",
         "WPFTweaksConsumerFeatures",
         "WPFTweaksTele",
-        "WPFTweaksDisplay",
         "WPFTweaksAH",
         "WPFTweaksRightClickMenu",
         "WPFTweaksRemoveCopilot",
@@ -21,20 +20,22 @@
         "WPFTweaksServices",
         "WPFTweaksRecallOff",
         "WPFTweaksDisableBGapps",
-        "WPFTweaksDNS",
         "WPFTweaksPower",
-        "WPFTweaksGaming",
-        "WPFTweaksClassic",
         "WPFTweaksTaskbar",
         "WPFTweaksStartMenu",
-        "WPFTweaksHiber",
         "WPFTweaksPowershell7Tele",
         "WPFTweaksDisableExplorerAutoDiscovery",
         "WPFTweaksEdgeDebloat",
         "WPFTweaksStorage",
         "WPFTweaksDeleteTempFiles",
         "WPFTweaksDVR",
-        "WPFTweaksEndTaskOnTaskbar"
+        "WPFTweaksEndTaskOnTaskbar",
+        "WPFToggleBingSearch",
+        "WPFToggleStartMenuRecommendations",
+        "WPFToggleHideSettingsHome",
+        "WPFToggleMouseAcceleration",
+        "WPFToggleStickyKeys",
+        "WPFToggleDetailedBSoD",
+        "WPFAddUltPerf"
     ]
 }
-  
