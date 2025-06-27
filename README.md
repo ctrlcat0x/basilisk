@@ -1,7 +1,7 @@
 # <p align="center">Basilisk - Windows 11 Debloating Utility </p>
 
 <p align="center">
-  <img src="banner.png" alt="Basilisk Banner" width="800">
+  <img src="banner.png" alt="Basilisk Banner">
 </p>
 
 <p align="center">
