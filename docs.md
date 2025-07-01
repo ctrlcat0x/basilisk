@@ -373,7 +373,7 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM
 **Purpose**: Sets custom desktop wallpaper and performs cleanup.
 
 **Actions Performed:**
-- **Wallpaper**: Sets `background.jpeg` as desktop wallpaper
+- **Wallpaper**: Sets `background.jpg` as desktop wallpaper
 - **Cleanup**: Removes temporary files and system cache
 - **Finalization**: Completes the debloating process
 

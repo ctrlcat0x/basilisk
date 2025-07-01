@@ -38,11 +38,11 @@ def main():
         components_dir = os.path.dirname(os.path.abspath(__file__))
         base_path = os.path.dirname(components_dir)
     media_dir = os.path.join(base_path, 'media')
-    temp_wallpaper = os.path.join(tempfile.gettempdir(), "basilisk", "media", "background.jpeg")
+    temp_wallpaper = os.path.join(tempfile.gettempdir(), "basilisk", "media", "background.jpg")
     if os.path.exists(temp_wallpaper):
         wallpaper_path = temp_wallpaper
     else:
-        wallpaper_path = get_resource_path('media/background.jpeg')
+        wallpaper_path = get_resource_path('media/background.jpg')
     logger.info(f"Setting desktop background: {wallpaper_path}")
     if not os.path.exists(wallpaper_path):
         msg = f"Wallpaper file not found: {wallpaper_path}"

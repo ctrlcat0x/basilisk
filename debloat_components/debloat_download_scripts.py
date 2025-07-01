@@ -17,7 +17,7 @@ SCRIPTS_DIR = os.path.join(tempfile.gettempdir(), 'basilisk')
 GITHUB_RAW_URL = f"https://raw.githubusercontent.com/ctrlcat0x/basilisk/master/scripts/"
 
 MEDIA_FILES = [
-    "background.jpeg",
+    "background.jpg",
 ]
 MEDIA_DIR = os.path.join(tempfile.gettempdir(), 'basilisk', 'media')
 GITHUB_MEDIA_URL = "https://raw.githubusercontent.com/ctrlcat0x/basilisk/master/media/"
