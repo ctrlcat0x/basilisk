@@ -150,11 +150,10 @@ Basilisk follows a modular 8-step debloating process:
 1. **📥 Download Scripts** - Downloads PowerShell scripts from Github servers
 2. **🦅 Execute Scripts** - Runs custom scripts for Edge removal and Office Online cleanup
 3. **🔧 Execute External Scripts** - Runs ChrisTitusTech WinUtil and Raphi's Win11Debloat
-4. **🔒 Execute Privacy.sexy** - Runs comprehensive privacy and security hardening
-5. **⚙️ Registry Tweaks** - Applies visual and performance registry modifications
-6. **🚀 Advanced Optimizations** - Enables Ultimate Performance, disables telemetry, removes UWP apps
-7. **🔄 Configure Updates** - Sets appropriate update policies for your Windows edition
-8. **🎨 Apply Background** - Sets custom desktop wallpaper and cleans up temporary files
+4. **⚙️ Registry Tweaks** - Applies visual and performance registry modifications
+5. **🚀 Advanced Optimizations** - Enables Ultimate Performance, disables telemetry, removes UWP apps
+6. **🔄 Configure Updates** - Sets appropriate update policies for your Windows edition
+7. **🎨 Apply Background** - Sets custom desktop wallpaper and cleans up temporary files
 
 ## 🛡️ Safety & Compatibility
 
@@ -190,7 +189,6 @@ basilisk/
 ### PowerShell Scripts Used
 - **ChrisTitusTech WinUtil** - Comprehensive Windows optimization
 - **Raphi Win11Debloat** - Additional debloating and customization
-- **Privacy.sexy** - Comprehensive privacy and security hardening
 - **Custom Scripts** - Edge removal and Office Online cleanup
 
 ### Advanced Optimizations
@@ -243,7 +241,6 @@ We welcome contributions from the community! Here's how you can help:
 - [Talon by Raven Development Team](https://github.com/ravendevteam/talon)
 - [ChrisTitusTech](https://github.com/christitustech) - [CTT WinUtil](https://github.com/christitustech/winutil)
 - [Raphire](https://github.com/Raphire) - [Win11Debloat](https://github.com/Raphire/Win11Debloat)
-- [undergroundwires](https://github.com/undergroundwires) - [privacy.sexy](https://github.com/undergroundwires/privacy.sexy)
 - [Massgrave Activation Script](https://github.com/massgravel/Microsoft-Activation-Scripts)
 
 ## 📄 License

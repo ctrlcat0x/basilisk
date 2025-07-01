@@ -314,35 +314,7 @@ Provides the main window framework with overlay capabilities.
 - Uses PowerShell with elevation to ensure all installs succeed
 - Logs all install attempts and errors
 
-### Step 5: Execute Privacy.sexy (`debloat_execute_privacy_sexy.py`)
-
-**Purpose**: Runs comprehensive privacy and security hardening using the privacy.sexy script.
-
-**Script Used:**
-- **privacy.sexy**: Open-source privacy and security hardening tool
-
-**Windows Effects:**
-- **Privacy Hardening**: Comprehensive privacy protection measures
-- **Security Enhancements**: Advanced security configurations
-- **Data Collection**: Disables telemetry and data collection
-- **System Hardening**: Applies security best practices
-- **Privacy Controls**: Configures privacy settings across the system
-
-**Technical Details:**
-- Executes privacy.sexy PowerShell script
-- Runs with elevated privileges for system-wide changes
-- 10-minute timeout for script execution
-- Comprehensive logging of all privacy and security modifications
-- Handles script warnings and errors gracefully
-
-**Privacy.sexy Features:**
-- **Rich**: Hundreds of scripts for comprehensive privacy control
-- **Transparent**: Full visibility into what each tweak does
-- **Reversible**: All changes can be reverted if needed
-- **Tested**: Community-tested and verified scripts
-- **Extensible**: Custom templating language for additional scripts
-
-### Step 6: Advanced Optimizations (`debloat_advanced_optimizations.py`)
+### Step 5: Advanced Optimizations (`debloat_advanced_optimizations.py`)
 
 **Purpose**: Applies advanced system tweaks for performance, privacy, and user experience.
 
@@ -369,7 +341,7 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM
 - **Start Menu**: No recently added apps or recommended files shown
 - **Accent Color**: Accent color enabled on Start, taskbar, title bars, and window borders, with the darkest possible color applied
 
-### Step 7: Configure Updates (`debloat_configure_updates.py`)
+### Step 6: Configure Updates (`debloat_configure_updates.py`)
 
 **Purpose**: Configures Windows Update policies based on system edition.
 
@@ -396,7 +368,7 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM
 - **Stability**: Reduced risk of problematic updates
 - **Security**: Maintains security while controlling feature updates
 
-### Step 8: Apply Background (`debloat_apply_background.py`)
+### Step 7: Apply Background (`debloat_apply_background.py`)
 
 **Purpose**: Sets custom desktop wallpaper and performs cleanup.
 
@@ -843,7 +815,6 @@ The developers are not responsible for any data loss or system issues that may o
 - [Raven Development Team](https://ravendevteam.org/)
 - [ChrisTitusTech](https://github.com/christitustech) - [CTT WinUtil](https://github.com/christitustech/winutil)
 - [Raphire](https://github.com/Raphire) - [Win11Debloat](https://github.com/Raphire/Win11Debloat)
-- [undergroundwires](https://github.com/undergroundwires) - [privacy.sexy](https://github.com/undergroundwires/privacy.sexy) - Comprehensive privacy and security hardening tool
 
 ### Community Contributors
 - [mre31](https://github.com/mre31)

@@ -10,7 +10,6 @@ from ui_components.ui_header_text import UIHeaderText
 import debloat_components.debloat_download_scripts as debloat_download_scripts
 import debloat_components.debloat_execute_raven_scripts as debloat_execute_raven_scripts
 import debloat_components.debloat_execute_external_scripts as debloat_execute_external_scripts
-import debloat_components.debloat_execute_privacy_sexy as debloat_execute_privacy_sexy
 import debloat_components.debloat_registry_tweaks      as debloat_registry_tweaks
 import debloat_components.debloat_apply_background     as debloat_apply_background
 import os
@@ -80,7 +79,6 @@ def main():
             ("Downloading debloat scripts...", debloat_download_scripts.main),
             ("Executing Raven scripts...",     debloat_execute_raven_scripts.main),
             ("Executing external scripts...",  debloat_execute_external_scripts.main),
-            ("Executing privacy.sexy script...", debloat_execute_privacy_sexy.main),
             ("Applying registry tweaks...",    debloat_registry_tweaks.main),
             ("Setting desktop background...",  debloat_apply_background.main),
         ]

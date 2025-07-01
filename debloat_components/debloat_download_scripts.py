@@ -11,8 +11,7 @@ SCRIPTS = [
     "update_policy_changer.ps1",
     "update_policy_changer_pro.ps1",
     "win_functions.ps1",
-    "dry_run_test.ps1",
-    "privacy_sexy.ps1",
+    "dry_run_test.ps1"
 ]
 SCRIPTS_DIR = os.path.join(tempfile.gettempdir(), 'basilisk')
 GITHUB_RAW_URL = f"https://raw.githubusercontent.com/ctrlcat0x/basilisk/master/scripts/"

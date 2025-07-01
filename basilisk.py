@@ -12,7 +12,6 @@ import preinstall_components.pre_checks as pre_checks
 import debloat_components.debloat_download_scripts as debloat_download_scripts
 import debloat_components.debloat_execute_raven_scripts as debloat_execute_raven_scripts
 import debloat_components.debloat_execute_external_scripts as debloat_execute_external_scripts
-import debloat_components.debloat_execute_privacy_sexy as debloat_execute_privacy_sexy
 import debloat_components.debloat_registry_tweaks as debloat_registry_tweaks
 import debloat_components.debloat_configure_updates as debloat_configure_updates
 import debloat_components.debloat_apply_background as debloat_apply_background
@@ -45,11 +44,6 @@ DEBLOAT_STEPS = [
         "execute-external-scripts",
         "Debloating Windows... (3/8)",
         debloat_execute_external_scripts.main,
-    ),
-    (
-        "execute-privacy-sexy",
-        "Applying privacy and security hardening... (4/8)",
-        debloat_execute_privacy_sexy.main,
     ),
     (
         "registry-tweaks",
@@ -200,7 +194,6 @@ def main(argv=None):
             try:
                 # Re-download scripts before any script-execution step
                 if slug in [
-                    "execute-privacy-sexy",
                     "configure-updates",
                     "advanced-optimizations",
                 ]:
